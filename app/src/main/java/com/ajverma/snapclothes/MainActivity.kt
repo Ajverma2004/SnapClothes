@@ -15,6 +15,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
+            delay(2000)
             showSplashScreen = false
         }
     }
