@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionScreen
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel
+import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupScreen
+
 import com.ajverma.snapclothes.presentation.screens.welcome.WelcomeScreen
 
 
@@ -37,6 +39,10 @@ fun SnapNavigation(
 
             composable<AuthOption>{
                 AuthOptionScreen(navController = navController)
+            }
+
+            composable<SignUp> {
+                SignupScreen(navController = navController)
             }
 
             composable<Home> {

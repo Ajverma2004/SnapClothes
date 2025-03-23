@@ -9,7 +9,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.firebase.BuildConfig
+import com.ajverma.snapclothes.BuildConfig
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -74,7 +74,7 @@ class GoogleAuthClient @Inject constructor(
                 GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
                     .setServerClientId(
-                        "395194503910-11crd21hl11p09gfdlpi3hnbl745238a.apps.googleusercontent.com"
+                        BuildConfig.GOOGLE_WEB_CLIENT_ID
                     )
                     .setAutoSelectEnabled(false)
                     .build()

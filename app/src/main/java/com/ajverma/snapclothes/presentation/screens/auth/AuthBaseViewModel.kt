@@ -39,25 +39,29 @@ abstract class AuthBaseViewModel(
         return googleAuthClient.isSignedIn()
     }
 
-    fun onGoogleClick(context: ComponentActivity){
-        initiateGoogleLogin(context)
+    fun onGoogleClick(){
+        initiateGoogleLogin()
     }
 
-    private fun initiateGoogleLogin(context: ComponentActivity) {
+    private fun initiateGoogleLogin() {
         viewModelScope.launch {
             loading()
-            facebookAuthClient.login(
-                activity = context,
-                onSuccess = {
-                    onSocialLoginSuccess()
-                },
-                onCancel = {
-                    onFacebookError("Facebook login canceled")
-                },
-                onError = {
-                    onFacebookError(it)
+            try {
+                val result = googleAuthClient.signInWithGoogle()
+                when (result) {
+                    is SignInResult.Success -> {
+                        Log.d("GoogleAuthClient", "Sign in successful")
+                        onSocialLoginSuccess()
+                    }
+                    is SignInResult.Error -> {
+                        onGoogleError(result.message)
+                    }
                 }
-            )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onGoogleError(e.message ?: "Unknown error")
+            }
+
         }
     }
 
@@ -78,38 +82,26 @@ abstract class AuthBaseViewModel(
         initiateFacebookLogin(context)
     }
 
-    private fun initiateFacebookLogin(context: ComponentActivity){
-        loading()
-        callbackManager = CallbackManager.Factory.create()
-
-        LoginManager.getInstance().registerCallback(callbackManager,
-            object : FacebookCallback<LoginResult> {
-                override fun onSuccess(loginResult: LoginResult) {
-                    viewModelScope.launch {
-                        val credential = FacebookAuthProvider.getCredential(loginResult.accessToken.token)
-                        FirebaseAuth.getInstance().signInWithCredential(credential)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) onSocialLoginSuccess()
-                                else onFacebookError(task.exception?.message ?: "Firebase sign-in failed")
-                            }
-                    }
-                }
-
-                override fun onCancel() {
+    private fun initiateFacebookLogin(context: ComponentActivity) {
+        viewModelScope.launch {
+            Log.d("FacebookLogin", "Initiating Facebook Login")
+            loading()
+            facebookAuthClient.login(
+                activity = context,
+                onSuccess = {
+                    Log.d("FacebookLogin", "Facebook Login Success")
+                    onSocialLoginSuccess()
+                },
+                onCancel = {
+                    Log.d("FacebookLogin", "Facebook Login Cancelled")
                     onFacebookError("Facebook login canceled")
+                },
+                onError = {
+                    Log.e("FacebookLogin", "Facebook Login Error: $it")
+                    onFacebookError(it)
                 }
-
-                override fun onError(exception: FacebookException) {
-                    onFacebookError(exception.message.toString())
-                    Log.e("SignUpViewModel", "Error: ${exception.message}")
-                }
-            })
-
-        LoginManager.getInstance().logInWithReadPermissions(
-            context,
-            callbackManager,
-            listOf("public_profile", "email")
-        )
+            )
+        }
     }
 
 }

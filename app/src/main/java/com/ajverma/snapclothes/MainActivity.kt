@@ -21,18 +21,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
+import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
+import com.facebook.CallbackManager
+import com.facebook.FacebookSdk
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var showSplashScreen = true
+    @Inject
+    lateinit var facebookAuthClient: FacebookAuthClient
+
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -64,4 +71,5 @@ class MainActivity : ComponentActivity() {
             showSplashScreen = false
         }
     }
+
 }

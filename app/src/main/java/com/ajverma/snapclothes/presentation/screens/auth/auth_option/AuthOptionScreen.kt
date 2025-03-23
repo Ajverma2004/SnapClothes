@@ -121,7 +121,7 @@ fun AuthOptionScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 160.dp),
+                .padding(top = 140.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -206,7 +206,7 @@ fun AuthOptionScreen(
 
                         Button(
                             onClick = {
-//                                navController.navigate(SignUp)
+                                navController.navigate(SignUp)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Black.copy(alpha = 0.1f)
@@ -231,7 +231,7 @@ fun AuthOptionScreen(
                             trailingText = "Login",
                             textDecoration = TextDecoration.Underline,
                             onClick = {
-    //                            navController.navigate(Login)
+                                viewModel.navigateToLogin()
                             }
                         )
                     }
@@ -245,8 +245,7 @@ fun AuthOptionScreen(
                 sheetState = sheetState
             ) {
                 BasicDialog(
-//                    title = viewModel.error,
-                    title = "Error",
+                    title = viewModel.error,
                     description = errorMessage.toString(),
                     onClick = {
                         scope.launch {

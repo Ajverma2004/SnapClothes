@@ -50,8 +50,10 @@ fun SnapClothesTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = RoundedCornerShape(10.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors().copy(
-        focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-        unfocusedIndicatorColor = Color.LightGray.copy(alpha = 0.4f),
+        focusedIndicatorColor = Color.Black,
+        unfocusedIndicatorColor = Color.Black,
+        focusedContainerColor = Color.White,
+        unfocusedContainerColor = Color.Transparent,
     )
 ) {
     Column(Modifier.padding(vertical = 14.dp)) {
