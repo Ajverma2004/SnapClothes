@@ -2,6 +2,8 @@
 agp = "8.8.2"
 coilCompose = "3.0.4"
 coilNetworkOkhttp = "3.0.4"
+facebookAndroidSdk = "latest.release"
+firebaseBom = "33.11.0"
 kotlin = "2.0.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -22,11 +24,22 @@ hiltAndroid = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 sceneview = "2.2.1"
 roomCompiler = "2.6.1"
+credentialsPlayServicesAuth = "1.5.0"
+googleid = "1.1.1"
+gmsGoogleServices = "4.4.2"
 
 [libraries]
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentialsPlayServicesAuth" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
+google-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebookAndroidSdk" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -59,4 +72,5 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+gms-google-services = { id = "com.google.gms.google-services", version.ref = "gmsGoogleServices" }
 

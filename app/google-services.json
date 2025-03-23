@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395194503910",
+    "project_id": "snapclothes-922de",
+    "storage_bucket": "snapclothes-922de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395194503910:android:556431cded922a67ade127",
+        "android_client_info": {
+          "package_name": "com.ajverma.snapclothes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2flkGMURJ1hcE71ChZ0jCC104ZGEg5Q0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
