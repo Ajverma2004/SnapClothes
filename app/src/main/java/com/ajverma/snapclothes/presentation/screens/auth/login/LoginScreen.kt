@@ -1,4 +1,4 @@
-package com.ajverma.snapclothes.presentation.screens.auth.sign_up
+package com.ajverma.snapclothes.presentation.screens.auth.login
 
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel
+import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupViewModel
 import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.Login
@@ -67,10 +68,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupScreen(
+fun LoginScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: SignupViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -88,11 +89,11 @@ fun SignupScreen(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     when(val state = uiState.value){
-        is SignupViewModel.SignupEvent.Error -> {
+        is LoginViewModel.LoginEvent.Error -> {
             isLoading = false
             errorMessage = state.message
         }
-        is SignupViewModel.SignupEvent.Loading -> {
+        is LoginViewModel.LoginEvent.Loading -> {
             isLoading = true
             errorMessage = null
         }
@@ -105,7 +106,7 @@ fun SignupScreen(
     LaunchedEffect(true) {
         viewModel.navigationEvent.collectLatest { event ->
             when(event){
-                is SignupViewModel.SignupNavigationEvent.NavigateToHome -> {
+                is LoginViewModel.LoginNavigationEvent.NavigateToHome -> {
                     navController.navigate(Home){
                         popUpTo(Welcome) {
                             inclusive = true
@@ -113,8 +114,8 @@ fun SignupScreen(
                     }
                 }
 
-                is SignupViewModel.SignupNavigationEvent.NavigateToLogin -> {
-                    navController.navigate(Login){
+                is LoginViewModel.LoginNavigationEvent.NavigateToSignup -> {
+                    navController.navigate(SignUp){
                         popUpTo(AuthOption) {
                             inclusive = false
                         }
@@ -123,7 +124,7 @@ fun SignupScreen(
                     }
                 }
 
-                is SignupViewModel.SignupNavigationEvent.ShowDialog -> {
+                is LoginViewModel.LoginNavigationEvent.ShowDialog -> {
                     showDialog = true
                 }
                 else -> {}
@@ -156,7 +157,7 @@ fun SignupScreen(
             )
 
             Text(
-                stringResource(R.string.sign_up),
+                stringResource(R.string.login),
                 color = Color.Black,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
@@ -197,7 +198,7 @@ fun SignupScreen(
 
                 Button(
                     onClick = {
-                        viewModel.onSignUpClick()
+                        viewModel.onLoginClick()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White
@@ -226,7 +227,7 @@ fun SignupScreen(
                                 )
                             } else{
                                 Text(
-                                    "SIGN UP",
+                                    "LOGIN",
                                     color = Color.Black,
                                     fontSize = 16.sp,
                                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
@@ -292,7 +293,8 @@ fun SignupScreen(
 
                     // already have an account text
                     AlreadyHaveAnAccountText(
-                        trailingText = "Login",
+                        initialText = "Don't have an account?",
+                        trailingText = "Sign Up",
                         textDecoration = TextDecoration.Underline,
                         onClick = {
                             viewModel.navigateToLogin()
