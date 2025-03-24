@@ -1,9 +1,12 @@
 [versions]
+accompanistNavigationAnimation = "0.34.0"
 agp = "8.8.2"
 coilCompose = "3.0.4"
 coilNetworkOkhttp = "3.0.4"
+dotsindicator = "5.1.0"
 facebookAndroidSdk = "latest.release"
 firebaseBom = "33.11.0"
+firebaseFirestoreKtx = "25.1.3"
 kotlin = "2.0.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -29,8 +32,11 @@ googleid = "1.1.1"
 gmsGoogleServices = "4.4.2"
 
 [libraries]
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentialsPlayServicesAuth" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
+dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 google-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebookAndroidSdk" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }

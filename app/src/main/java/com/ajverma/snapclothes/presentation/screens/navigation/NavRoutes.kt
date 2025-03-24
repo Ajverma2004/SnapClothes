@@ -8,6 +8,9 @@ interface NavRoutes
 object Welcome : NavRoutes
 
 @Serializable
+object Favourites : NavRoutes
+
+@Serializable
 object AuthOption : NavRoutes
 
 @Serializable

@@ -1,6 +1,8 @@
 package com.ajverma.snapclothes.presentation.screens.navigation
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,19 +22,22 @@ import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionS
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel
 import com.ajverma.snapclothes.presentation.screens.auth.login.LoginScreen
 import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupScreen
+import com.ajverma.snapclothes.presentation.screens.home.HomeScreen
 
 import com.ajverma.snapclothes.presentation.screens.welcome.WelcomeScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SnapNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    onScreenChanged: (Boolean) -> Unit,
     viewModel: AuthOptionViewModel = hiltViewModel()
 ) {
 
-    SharedTransitionScope {
+    SharedTransitionLayout{
         NavHost(navController = navController, startDestination = if (viewModel.isSignedIn()) Home else Welcome){
             composable<Welcome>{
                 WelcomeScreen(navController = navController)
@@ -50,37 +55,20 @@ fun SnapNavigation(
                 LoginScreen(navController = navController)
             }
 
-            composable<Home> {
-                val navEvent = viewModel.navigationEvent.collectAsStateWithLifecycle(initialValue = null)
-
-                // observe the navigation event
-                LaunchedEffect(navEvent.value) {
-                    when (navEvent.value) {
-                        is AuthOptionViewModel.AuthNavigationEvent.NavigateToWelcomeScreen -> {
-                            navController.navigate(Welcome) {
-                                popUpTo(Home) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                        else -> Unit
-                    }
-                }
-
+            composable<Favourites> {
+                onScreenChanged(true)
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Button(
-                        onClick = {
-                            viewModel.onSignOutClick()
-                        }
-                    ) {
-                        Text(text = "sign out", color = Color.Black)
-                    }
+                    Text(text = "Favourites", color = Color.Black)
                 }
             }
 
+            composable<Home> {
+                onScreenChanged(true)
+                HomeScreen(navController = navController)
+            }
         }
     }
 }

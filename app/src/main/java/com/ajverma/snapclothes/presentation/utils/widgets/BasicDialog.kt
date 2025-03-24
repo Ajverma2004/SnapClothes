@@ -1,4 +1,4 @@
-package com.ajverma.snapclothes.presentation.utils
+package com.ajverma.snapclothes.presentation.utils.widgets
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

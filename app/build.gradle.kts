@@ -66,6 +66,10 @@ dependencies {
     //firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+
+    //dot indicator
+    implementation(libs.dotsindicator)
 
     //google auth
     implementation(libs.androidx.credentials)
@@ -89,6 +93,7 @@ dependencies {
 
     //navigation
     implementation (libs.androidx.navigation.compose)
+    implementation(libs.accompanist.navigation.animation)
     implementation(libs.kotlinx.serialization.json)
 
     //dagger hilt

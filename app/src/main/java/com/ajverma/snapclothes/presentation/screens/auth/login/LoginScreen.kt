@@ -25,7 +25,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,15 +49,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.snapclothes.R
-import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel
-import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupViewModel
 import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
-import com.ajverma.snapclothes.presentation.screens.navigation.Login
 import com.ajverma.snapclothes.presentation.screens.navigation.SignUp
 import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
-import com.ajverma.snapclothes.presentation.utils.BasicDialog
-import com.ajverma.snapclothes.presentation.utils.SnapClothesTextField
+import com.ajverma.snapclothes.presentation.utils.widgets.BasicDialog
+import com.ajverma.snapclothes.presentation.utils.widgets.SnapClothesTextField
 import com.ajverma.snapclothes.presentation.utils.auth_components.AlreadyHaveAnAccountText
 import com.ajverma.snapclothes.presentation.utils.auth_components.SignInOptionButton
 import com.ajverma.snapclothes.presentation.utils.auth_components.SignInTextWithLine

@@ -39,12 +39,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.snapclothes.R
-import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.Login
 import com.ajverma.snapclothes.presentation.screens.navigation.SignUp
 import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
-import com.ajverma.snapclothes.presentation.utils.BasicDialog
+import com.ajverma.snapclothes.presentation.utils.widgets.BasicDialog
 import com.ajverma.snapclothes.presentation.utils.auth_components.AlreadyHaveAnAccountText
 import com.ajverma.snapclothes.presentation.utils.auth_components.SignInOptionButton
 import com.ajverma.snapclothes.presentation.utils.auth_components.SignInTextWithLine
