@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajverma.snapclothes.data.network.models.BannerResponseItem
 import com.ajverma.snapclothes.data.network.models.CategoryResponse
+import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.domain.repositories.HomeRepository
 import com.ajverma.snapclothes.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,9 +33,14 @@ class HomeViewModel @Inject constructor(
     private val _categories = MutableStateFlow<List<String>>(emptyList())
     val categories = _categories.asStateFlow()
 
+    private val _products = MutableStateFlow<List<ProductResponseItem>>(emptyList())
+    val products = _products.asStateFlow()
+
+
     init {
         getBanners()
         getCategories()
+        getProducts()
     }
 
 
@@ -62,6 +68,22 @@ class HomeViewModel @Inject constructor(
                 is Resource.Success -> {
                     _state.value = HomeState.Success
                     _categories.value = result.data.categories
+                }
+                is Resource.Error -> {
+                    _state.value = HomeState.Error(result.message)
+                }
+            }
+        }
+    }
+
+    fun getProducts(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value = HomeState.Loading
+            val result = repository.getProducts()
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = HomeState.Success
+                    _products.value = result.data
                 }
                 is Resource.Error -> {
                     _state.value = HomeState.Error(result.message)

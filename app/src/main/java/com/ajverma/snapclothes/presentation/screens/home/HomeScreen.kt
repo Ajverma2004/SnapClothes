@@ -1,6 +1,7 @@
 package com.ajverma.snapclothes.presentation.screens.home
 
 import android.util.Log
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapBanner
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapCategories
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapError
@@ -45,6 +50,7 @@ fun HomeScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val bannersList = viewModel.banners.collectAsStateWithLifecycle()
     val categoriesList = viewModel.categories.collectAsStateWithLifecycle()
+    val productsList = viewModel.products.collectAsStateWithLifecycle()
 
 
 
@@ -60,42 +66,43 @@ fun HomeScreen(
         }
     }
 
+        LazyColumn(modifier = modifier.fillMaxSize()) {
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-
-        SnapHeader(
-            title = "SnapClothes",
-            showFavourites = true,
-            showBackButton = true
-        )
-
-        when (val uiState = state.value) {
-            is HomeViewModel.HomeState.Loading -> {
-                SnapLoading()
+            item {
+                SnapHeader(
+                    title = "SnapClothes",
+                    showFavourites = false,
+                    showBackButton = false
+                )
             }
 
-            is HomeViewModel.HomeState.Error -> {
-                SnapError(
-                    error = uiState.message,
-                    onRetry = {
-                        viewModel.getBanners()
+            when (val uiState = state.value) {
+                is HomeViewModel.HomeState.Loading -> {
+                    item { SnapLoading() }
+                }
+
+                is HomeViewModel.HomeState.Error -> {
+                    item { SnapError(
+                        error = uiState.message,
+                        onRetry = {
+                            viewModel.getBanners()
+                            viewModel.getCategories()
+                            viewModel.getProducts()
+                        }
+                    ) }
+                }
+
+                is HomeViewModel.HomeState.Success -> {
+
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
+
+                    item {
+                        SnapBanner(
+                            bannerList = bannersList.value
+                        )
                     }
-                )
-            }
 
-            is HomeViewModel.HomeState.Success -> {
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                SnapBanner(
-                    bannerList = bannersList.value
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
 
 //                Text(
 //                    "Categories",
@@ -106,33 +113,52 @@ fun HomeScreen(
 //                        .align(Alignment.Start),
 //                    fontWeight = FontWeight.Bold,
 //                )
-                SnapOutlinedText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp)
-                        .align(Alignment.Start),
-                    text = "Categories",
-                    color = SnapYellow,
-                    strokeColor = Color.Black,
-                    style =  MaterialTheme.typography.titleMedium
-                )
+                    item {
+                        SnapOutlinedText(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp)
+                                ,
+                            text = "Categories",
+                            color = SnapYellow,
+                            strokeColor = Color.Black,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
 
-                Spacer(modifier = Modifier.height(10.dp))
-                Log.d("Categories", categoriesList.value.toString())
-                SnapCategories(
-                    categories = categoriesList.value
-                )
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
 
+                    item {
+                        SnapCategories(
+                            categories = categoriesList.value
+                        )
+                    }
 
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
 
+                    item {
+                        SnapOutlinedText(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp)
+                            ,
+                            text = "Recommendations",
+                            color = SnapYellow,
+                            strokeColor = Color.Black,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
 
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                    ProductsView(
+                        products = productsList.value,
+                        onProductClick = {
+                        }
+                    )
+                }
             }
         }
-
-
     }
-
-
-}
 
 
