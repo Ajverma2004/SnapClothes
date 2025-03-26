@@ -39,11 +39,6 @@ fun SnapHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(
-                elevation = 10.dp,
-                shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
-                clip = true
-            )
             .height(60.dp)
             .background(MaterialTheme.colorScheme.primary)
             .padding(horizontal = 10.dp)

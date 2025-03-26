@@ -69,6 +69,12 @@ class ProductsListViewModel @Inject constructor(
         }
     }
 
+    fun onProductClicked(productId: String){
+        viewModelScope.launch {
+            _event.emit(ProductsListEvent.OnProductClicked(productId))
+        }
+    }
+
 
     sealed class ProductsListState {
         data object Loading : ProductsListState()

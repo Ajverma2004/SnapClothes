@@ -1,7 +1,11 @@
 package com.ajverma.snapclothes.presentation.screens.home
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Indication
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -52,12 +56,12 @@ import com.ajverma.snapclothes.presentation.utils.widgets.SnapOutlinedText
 import com.ajverma.snapclothes.ui.theme.SnapYellow
 import kotlinx.coroutines.flow.collectLatest
 
+
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
-    productListViewModel: ProductsListViewModel = hiltViewModel(),
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -71,12 +75,13 @@ fun HomeScreen(
         viewModel.event.collectLatest {
             when (it) {
                 is HomeViewModel.HomeEvent.NavigateToDetails -> {
-                    navController.navigate(ProductDetails(it.product))
+                    navController.navigate(ProductDetails(it.productId))
                 }
 
                 is HomeViewModel.HomeEvent.NavigateToProductsScreen -> {
                     navController.navigate(productListRoute(category = it.category))
                 }
+
                 is HomeViewModel.HomeEvent.NavigateToAllProductsScreen -> {
                     navController.navigate(productListRoute())
                 }
@@ -86,128 +91,140 @@ fun HomeScreen(
         }
     }
 
-    LazyColumn(modifier = modifier.fillMaxSize()) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        SnapHeader(
+            title = "SnapClothes",
+            showFavourites = false,
+            showBackButton = false
+        )
 
-        item {
-            SnapHeader(
-                title = "SnapClothes",
-                showFavourites = false,
-                showBackButton = false
-            )
-        }
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
 
-        when (val uiState = state.value) {
-            is HomeViewModel.HomeState.Loading -> {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        SnapLoading()
+
+            when (val uiState = state.value) {
+                is HomeViewModel.HomeState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            SnapLoading()
+                        }
                     }
                 }
-            }
 
-            is HomeViewModel.HomeState.Error -> {
-                item {
-                    SnapError(
-                        error = uiState.message,
-                        onRetry = {
-                            viewModel.getBanners()
-                            viewModel.getCategories()
-                            viewModel.getProducts()
-                        }
-                    )
-                }
-            }
-
-            is HomeViewModel.HomeState.Success -> {
-
-                item { Spacer(modifier = Modifier.height(20.dp)) }
-
-                item {
-                    SnapBanner(
-                        bannerList = bannersList.value
-                    )
+                is HomeViewModel.HomeState.Error -> {
+                    item {
+                        SnapError(
+                            error = uiState.message,
+                            onRetry = {
+                                viewModel.getBanners()
+                                viewModel.getCategories()
+                                viewModel.getProducts()
+                            }
+                        )
+                    }
                 }
 
-                item { Spacer(modifier = Modifier.height(20.dp)) }
+                is HomeViewModel.HomeState.Success -> {
+
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
+
+                    item {
+                        SnapBanner(
+                            bannerList = bannersList.value
+                        )
+                    }
+
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
 
 
-                item {
-                    Text(
-                        "Categories",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-
-                item { Spacer(modifier = Modifier.height(10.dp)) }
-
-                item {
-                    SnapCategories(
-                        categories = categoriesList.value,
-                        onClick = {
-                            viewModel.onCategoryClicked(it)
-                        }
-                    )
-                }
-
-                item { Spacer(modifier = Modifier.height(20.dp)) }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    item {
                         Text(
-                            "More products",
+                            "Categories",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(10.dp),
                             fontWeight = FontWeight.Bold,
                         )
+                    }
+
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                    item {
+                        SnapCategories(
+                            categories = categoriesList.value,
+                            onClick = {
+                                viewModel.onCategoryClicked(it)
+                            }
+                        )
+                    }
+
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
+
+                    item {
                         Row(
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .clickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ) {
-                                    viewModel.onSeeAllClicked()
-                                  },
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "See all",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier,
+                                "More products",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .padding(10.dp),
                                 fontWeight = FontWeight.Bold,
                             )
+                            Row(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .clickable(
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ) {
+                                        viewModel.onSeeAllClicked()
+                                    },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    "See all",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier,
+                                    fontWeight = FontWeight.Bold,
+                                )
 
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                contentDescription = null,
-                                tint = Color.Black,
-                            )
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    tint = Color.Black,
+                                )
+
+                            }
 
                         }
-
                     }
+
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
+
+
+                    ProductsView(
+                        products = productsList.value,
+                        onProductClick = {
+                            viewModel.onProductClicked(it)
+                        },
+                    )
+
                 }
-
-                item { Spacer(modifier = Modifier.height(10.dp)) }
-
-                ProductsView(
-                    products = productsList.value,
-                    onProductClick = {
-                    }
-                )
             }
         }
     }

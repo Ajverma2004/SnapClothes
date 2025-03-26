@@ -1,5 +1,8 @@
 package com.ajverma.snapclothes.presentation.screens.products_list
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -34,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.snapclothes.domain.utils.toTitleCase
+import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapError
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
@@ -63,7 +67,11 @@ fun ProductsListScreen(
         viewModel.event.collectLatest { event ->
             when (event) {
                 is ProductsListViewModel.ProductsListEvent.OnProductClicked -> {
-//                    navController.navigate()
+                    navController.navigate(
+                        ProductDetails(
+                            productId = event.productId
+                        )
+                    )
                 }
 
                 is ProductsListViewModel.ProductsListEvent.OnBackClicked -> {
@@ -128,9 +136,10 @@ fun ProductsListScreen(
                 ProductsView(
                     products = stateValue.products,
                     onProductClick = {
-//                        viewModel.onProductClicked(it)
-                    }
+                        viewModel.onProductClicked(it)
+                    },
                 )
+
             }
 
         }
@@ -143,7 +152,7 @@ fun ProductsListScreen(
 fun BackButtonWithCategoryName(
     modifier: Modifier = Modifier,
     category: String? = null,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
 ) {
     Column {
         Row(

@@ -1,5 +1,7 @@
 package com.ajverma.snapclothes.presentation.utils.widgets
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,17 +45,18 @@ import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 
 
+
 fun LazyListScope.ProductsView(
     modifier: Modifier = Modifier,
     products: List<ProductResponseItem>,
-    onProductClick: (ProductResponseItem) -> Unit
+    onProductClick: (String) -> Unit
 ) {
     if (products.isNotEmpty()) {
         gridItems(products,2){ product ->
             ProductItem(
                 product = product,
                 onProductClick = {
-                    onProductClick(product)
+                    onProductClick(product._id)
                 }
             )
         }
@@ -63,7 +66,7 @@ fun LazyListScope.ProductsView(
 @Composable
 fun ProductItem(
     product: ProductResponseItem,
-    onProductClick: (ProductResponseItem) -> Unit
+    onProductClick: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -75,12 +78,12 @@ fun ProductItem(
                 clip = true
             )
             .background(Color.White)
-            .clickable { onProductClick(product) }
+            .clickable { onProductClick(product._id) }
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             // Image Carousel
             ImagePager(
-                images = product.image_urls!!
+                images = product.image_urls
             )
 
             // Info Section
@@ -118,7 +121,7 @@ fun ProductItem(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = String.format("%.1f", rating),
+                                text = rating.toString(),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onBackground
                             )

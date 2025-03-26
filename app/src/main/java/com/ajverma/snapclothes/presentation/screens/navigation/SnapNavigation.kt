@@ -72,7 +72,9 @@ fun SnapNavigation(
 
             composable<Home> {
                 onScreenChanged(true)
-                HomeScreen(navController = navController)
+                HomeScreen(
+                    navController = navController,
+                )
             }
 
             composable(
@@ -89,15 +91,16 @@ fun SnapNavigation(
 
                 ProductsListScreen(
                     navController = navController,
-                    category = category
+                    category = category,
                 )
             }
 
             composable<ProductDetails>{
-                val product = it.arguments?.getString("productId")
+                onScreenChanged(false)
+                val productId = it.arguments?.getString("productId")
                 ProductDetailsScreen(
                     navController = navController,
-                    product = product
+                    productId = productId!!
                 )
             }
 
