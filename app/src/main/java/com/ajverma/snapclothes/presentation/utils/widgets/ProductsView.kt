@@ -53,7 +53,7 @@ fun LazyListScope.ProductsView(
             ProductItem(
                 product = product,
                 onProductClick = {
-                    onProductClick(product._id)
+//                    onProductClick(product._id)
                 }
             )
         }
@@ -70,7 +70,7 @@ fun ProductItem(
             .fillMaxWidth()
             .padding(10.dp)
             .shadow(
-                elevation = 8.dp,
+                elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
                 clip = true
             )

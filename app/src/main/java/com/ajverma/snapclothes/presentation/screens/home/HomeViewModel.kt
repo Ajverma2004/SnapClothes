@@ -7,6 +7,7 @@ import com.ajverma.snapclothes.data.network.models.CategoryResponse
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.domain.repositories.HomeRepository
 import com.ajverma.snapclothes.domain.utils.Resource
+import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: HomeRepository
+    private val repository: HomeRepository,
 ): ViewModel() {
 
     private val _state = MutableStateFlow<HomeState>(HomeState.Loading)
@@ -92,6 +93,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onCategoryClicked(category: String) {
+        viewModelScope.launch {
+            _event.emit(HomeEvent.NavigateToProductsScreen(category))
+        }
+    }
+
+
 
 
 
@@ -103,7 +111,11 @@ class HomeViewModel @Inject constructor(
 
     sealed class HomeEvent {
         data class NavigateToDetails(
-            val id: Int
+            val id: String
         ) : HomeEvent()
+
+        data class NavigateToProductsScreen(
+            val category: String
+        ): HomeEvent()
     }
 }

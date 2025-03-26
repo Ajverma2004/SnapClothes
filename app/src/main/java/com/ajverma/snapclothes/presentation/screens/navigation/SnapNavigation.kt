@@ -23,6 +23,7 @@ import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionV
 import com.ajverma.snapclothes.presentation.screens.auth.login.LoginScreen
 import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupScreen
 import com.ajverma.snapclothes.presentation.screens.home.HomeScreen
+import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListScreen
 
 import com.ajverma.snapclothes.presentation.screens.welcome.WelcomeScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -68,6 +69,15 @@ fun SnapNavigation(
             composable<Home> {
                 onScreenChanged(true)
                 HomeScreen(navController = navController)
+            }
+
+            composable<ProductList>{
+                onScreenChanged(false)
+                val category = it.arguments?.getString("category") ?: return@composable
+                ProductsListScreen(
+                    navController = navController,
+                    category = category
+                )
             }
         }
     }

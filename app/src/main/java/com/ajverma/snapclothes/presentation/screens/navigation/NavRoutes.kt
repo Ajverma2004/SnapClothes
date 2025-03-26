@@ -14,6 +14,11 @@ object Favourites : NavRoutes
 object AuthOption : NavRoutes
 
 @Serializable
+data class ProductList(
+    val category: String? = null
+) : NavRoutes
+
+@Serializable
 object Login : NavRoutes
 
 @Serializable

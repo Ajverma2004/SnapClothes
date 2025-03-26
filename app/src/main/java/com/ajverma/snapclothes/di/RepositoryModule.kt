@@ -1,7 +1,9 @@
 package com.ajverma.snapclothes.di
 
 import com.ajverma.snapclothes.data.repositories.HomeRepositoryImpl
+import com.ajverma.snapclothes.data.repositories.ProductsListRepositoryImpl
 import com.ajverma.snapclothes.domain.repositories.HomeRepository
+import com.ajverma.snapclothes.domain.repositories.ProductsListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,5 +20,10 @@ abstract class RepositoryModule {
         homeRepositoryImpl: HomeRepositoryImpl
     ): HomeRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindProductsListRepository(
+        productsListRepositoryImpl: ProductsListRepositoryImpl
+    ): ProductsListRepository
 
 }

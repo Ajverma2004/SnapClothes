@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.ajverma.snapclothes.data.network.models.CategoryResponse
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +34,7 @@ import com.ajverma.snapclothes.ui.theme.SnapYellow
 fun SnapCategories(
     modifier: Modifier = Modifier,
     categories: List<String>,
+    onClick: (String) -> Unit
 ) {
     LazyRow(
         modifier = modifier.padding(horizontal = 10.dp)
@@ -41,7 +43,10 @@ fun SnapCategories(
             CategoryItem(
                 categoryName = nameFromCategory(categories[it]),
                 iconRes = iconFromCategory(categories[it]),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    onClick(categories[it])
+                }
             )
         }
     }
@@ -52,6 +57,7 @@ fun CategoryItem(
     categoryName: String,
     iconRes: Int,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -63,7 +69,11 @@ fun CategoryItem(
             modifier = Modifier
                 .size(60.dp)
                 .clip(CircleShape)
-                .background(SnapYellow.copy(alpha = 0.3f)), // subtle off-white background
+                .background(SnapYellow.copy(alpha = 0.3f))
+                .clickable {
+                    onClick()
+
+                },
             contentAlignment = Alignment.Center
         ) {
             // Category Icon
@@ -91,12 +101,3 @@ fun CategoryItem(
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun CategoryItemPreview() {
-    CategoryItem(
-        categoryName = "T-Shirt",
-        iconRes = R.drawable.tshirt// Replace with your drawable
-    )
-}

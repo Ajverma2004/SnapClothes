@@ -50,6 +50,7 @@ import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.NavRoutes
 import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
+import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
 import com.ajverma.snapclothes.ui.theme.SnapYellow
 import com.facebook.CallbackManager
