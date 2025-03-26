@@ -4,9 +4,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
+import com.ajverma.snapclothes.domain.repositories.HomeRepository
 import com.ajverma.snapclothes.domain.repositories.ProductsListRepository
 import com.ajverma.snapclothes.domain.utils.Resource
+import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductsListViewModel @Inject constructor(
-    private val repository: ProductsListRepository
+    private val repository: ProductsListRepository,
+    private val homeRepository: HomeRepository
 ): ViewModel() {
 
     private val _state = MutableStateFlow<ProductsListState>(ProductsListState.Loading)
@@ -38,6 +42,21 @@ class ProductsListViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     _state.emit(ProductsListState.Error(result.message))
+                }
+            }
+        }
+    }
+
+    fun getProducts(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _state.value = ProductsListState.Loading
+            val result = homeRepository.getProducts()
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = ProductsListState.Success(result.data)
+                }
+                is Resource.Error -> {
+                    _state.value = ProductsListState.Error(result.message)
                 }
             }
         }

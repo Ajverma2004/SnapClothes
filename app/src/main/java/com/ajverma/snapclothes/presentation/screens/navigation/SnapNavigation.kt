@@ -16,13 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionScreen
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel
 import com.ajverma.snapclothes.presentation.screens.auth.login.LoginScreen
 import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupScreen
 import com.ajverma.snapclothes.presentation.screens.home.HomeScreen
+import com.ajverma.snapclothes.presentation.screens.product_details.ProductDetailsScreen
 import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListScreen
 
 import com.ajverma.snapclothes.presentation.screens.welcome.WelcomeScreen
@@ -71,14 +75,33 @@ fun SnapNavigation(
                 HomeScreen(navController = navController)
             }
 
-            composable<ProductList>{
-                onScreenChanged(false)
-                val category = it.arguments?.getString("category") ?: return@composable
+            composable(
+                route = "ProductList?category={category}",
+                arguments = listOf(
+                    navArgument("category") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val category = backStackEntry.arguments?.getString("category")
+
                 ProductsListScreen(
                     navController = navController,
                     category = category
                 )
             }
+
+            composable<ProductDetails>{
+                val product = it.arguments?.getString("productId")
+                ProductDetailsScreen(
+                    navController = navController,
+                    product = product
+                )
+            }
+
+
         }
     }
 }

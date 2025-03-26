@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
 import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListViewModel
 import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
@@ -55,7 +57,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
-    productListViewModel: ProductsListViewModel = hiltViewModel()
+    productListViewModel: ProductsListViewModel = hiltViewModel(),
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -69,143 +71,154 @@ fun HomeScreen(
         viewModel.event.collectLatest {
             when (it) {
                 is HomeViewModel.HomeEvent.NavigateToDetails -> {
-//                    navController.navigate("details/${it.id}")
+                    navController.navigate(ProductDetails(it.product))
                 }
+
                 is HomeViewModel.HomeEvent.NavigateToProductsScreen -> {
-                    navController.navigate(ProductList(
-                        category = it.category
-                    ))
+                    navController.navigate(productListRoute(category = it.category))
                 }
+                is HomeViewModel.HomeEvent.NavigateToAllProductsScreen -> {
+                    navController.navigate(productListRoute())
+                }
+
                 else -> {}
             }
         }
     }
 
-        LazyColumn(modifier = modifier.fillMaxSize()) {
+    LazyColumn(modifier = modifier.fillMaxSize()) {
 
-            item {
-                SnapHeader(
-                    title = "SnapClothes",
-                    showFavourites = false,
-                    showBackButton = false
-                )
-            }
+        item {
+            SnapHeader(
+                title = "SnapClothes",
+                showFavourites = false,
+                showBackButton = false
+            )
+        }
 
-            when (val uiState = state.value) {
-                is HomeViewModel.HomeState.Loading -> {
-                    item{
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ){
-                            SnapLoading()
-                        }
+        when (val uiState = state.value) {
+            is HomeViewModel.HomeState.Loading -> {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        SnapLoading()
                     }
                 }
+            }
 
-                is HomeViewModel.HomeState.Error -> {
-                    item { SnapError(
+            is HomeViewModel.HomeState.Error -> {
+                item {
+                    SnapError(
                         error = uiState.message,
                         onRetry = {
                             viewModel.getBanners()
                             viewModel.getCategories()
                             viewModel.getProducts()
                         }
-                    ) }
-                }
-
-                is HomeViewModel.HomeState.Success -> {
-
-                    item { Spacer(modifier = Modifier.height(20.dp)) }
-
-                    item {
-                        SnapBanner(
-                            bannerList = bannersList.value
-                        )
-                    }
-
-                    item { Spacer(modifier = Modifier.height(20.dp)) }
-
-
-                    item {
-                        Text(
-                            "Categories",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
-
-                    item {
-                        SnapCategories(
-                            categories = categoriesList.value,
-                            onClick = {
-                                viewModel.onCategoryClicked(it)
-                            }
-                        )
-                    }
-
-                    item { Spacer(modifier = Modifier.height(20.dp)) }
-
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                "More products",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp),
-                                fontWeight = FontWeight.Bold,
-                            )
-
-                            Row(
-                                modifier = Modifier.clickable(
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ) {
-                                    navController.navigate(ProductList())
-                                }
-                            ) {
-                                Text(
-                                    "See all",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
-                                    fontWeight = FontWeight.Bold,
-                                )
-
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                    contentDescription = null,
-                                    tint = Color.Black
-                                )
-
-                            }
-
-
-                        }
-                    }
-
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
-
-                    ProductsView(
-                        products = productsList.value,
-                        onProductClick = {
-                        }
                     )
                 }
             }
+
+            is HomeViewModel.HomeState.Success -> {
+
+                item { Spacer(modifier = Modifier.height(20.dp)) }
+
+                item {
+                    SnapBanner(
+                        bannerList = bannersList.value
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(20.dp)) }
+
+
+                item {
+                    Text(
+                        "Categories",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                item {
+                    SnapCategories(
+                        categories = categoriesList.value,
+                        onClick = {
+                            viewModel.onCategoryClicked(it)
+                        }
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(20.dp)) }
+
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "More products",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .padding(10.dp),
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Row(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    viewModel.onSeeAllClicked()
+                                  },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                "See all",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier,
+                                fontWeight = FontWeight.Bold,
+                            )
+
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = null,
+                                tint = Color.Black,
+                            )
+
+                        }
+
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                ProductsView(
+                    products = productsList.value,
+                    onProductClick = {
+                    }
+                )
+            }
         }
     }
+}
+
+fun productListRoute(category: String? = null): String {
+    return if (category != null) {
+        "ProductList?category=$category"
+    } else {
+        "ProductList"
+    }
+}
 
 

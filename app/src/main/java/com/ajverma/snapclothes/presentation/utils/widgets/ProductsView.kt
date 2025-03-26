@@ -46,14 +46,14 @@ import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 fun LazyListScope.ProductsView(
     modifier: Modifier = Modifier,
     products: List<ProductResponseItem>,
-    onProductClick: (String) -> Unit
+    onProductClick: (ProductResponseItem) -> Unit
 ) {
     if (products.isNotEmpty()) {
         gridItems(products,2){ product ->
             ProductItem(
                 product = product,
                 onProductClick = {
-//                    onProductClick(product._id)
+                    onProductClick(product)
                 }
             )
         }
@@ -63,7 +63,7 @@ fun LazyListScope.ProductsView(
 @Composable
 fun ProductItem(
     product: ProductResponseItem,
-    onProductClick: (String) -> Unit
+    onProductClick: (ProductResponseItem) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -75,12 +75,12 @@ fun ProductItem(
                 clip = true
             )
             .background(Color.White)
-            .clickable { onProductClick(product._id) }
+            .clickable { onProductClick(product) }
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             // Image Carousel
             ImagePager(
-                images = product.image_urls
+                images = product.image_urls!!
             )
 
             // Info Section

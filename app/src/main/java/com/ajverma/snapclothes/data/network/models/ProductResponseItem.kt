@@ -1,5 +1,9 @@
 package com.ajverma.snapclothes.data.network.models
 
+
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ProductResponseItem(
     val _id: String,
     val arlink: String,
@@ -12,5 +16,5 @@ data class ProductResponseItem(
     val name: String,
     val price: Double,
     val rating: Double,
-    val sizes_available: List<String>
+    val sizes_available: ArrayList<String>
 )

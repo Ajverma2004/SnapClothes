@@ -47,12 +47,16 @@ fun ProductsListScreen(
     modifier: Modifier = Modifier,
     viewModel: ProductsListViewModel = hiltViewModel(),
     navController: NavController,
-    category: String,
+    category: String? = null,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state) {
-        viewModel.getProductsByCategory(category)
+        if (category != null) {
+            viewModel.getProductsByCategory(category)
+        } else {
+            viewModel.getProducts()
+        }
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -79,7 +83,7 @@ fun ProductsListScreen(
     ) {
         item {
             SnapHeader(
-                title = category,
+                title = category?.toTitleCase() ?: "All Products",
                 showFavourites = false,
                 showBackButton = false
             )
@@ -97,7 +101,11 @@ fun ProductsListScreen(
                     SnapError(
                         error = stateValue.message,
                         onRetry = {
-                            viewModel.getProductsByCategory(category)
+                            if (category != null) {
+                                viewModel.getProductsByCategory(category)
+                            } else {
+                                viewModel.getProducts()
+                            }
                         }
                     )
                 }
@@ -134,7 +142,7 @@ fun ProductsListScreen(
 @Composable
 fun BackButtonWithCategoryName(
     modifier: Modifier = Modifier,
-    category: String?,
+    category: String? = null,
     onBackClicked: () -> Unit
 ) {
     Column {
@@ -164,7 +172,7 @@ fun BackButtonWithCategoryName(
                 Spacer(Modifier.size(3.dp))
 
                 Text(
-                    text = category?.toTitleCase().orEmpty(),
+                    text = category?.toTitleCase() ?: "Back To Home",
                     color = Color.Black,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium

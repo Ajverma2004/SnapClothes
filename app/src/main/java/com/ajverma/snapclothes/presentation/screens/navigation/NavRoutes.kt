@@ -1,5 +1,6 @@
 package com.ajverma.snapclothes.presentation.screens.navigation
 
+import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import kotlinx.serialization.Serializable
 
 interface NavRoutes
@@ -16,6 +17,11 @@ object AuthOption : NavRoutes
 @Serializable
 data class ProductList(
     val category: String? = null
+) : NavRoutes
+
+@Serializable
+data class ProductDetails(
+    val productId: String
 ) : NavRoutes
 
 @Serializable

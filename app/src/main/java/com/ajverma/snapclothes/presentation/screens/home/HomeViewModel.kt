@@ -100,6 +100,12 @@ class HomeViewModel @Inject constructor(
     }
 
 
+    fun onSeeAllClicked() {
+        viewModelScope.launch {
+            _event.emit(HomeEvent.NavigateToAllProductsScreen)
+        }
+    }
+
 
 
 
@@ -111,11 +117,13 @@ class HomeViewModel @Inject constructor(
 
     sealed class HomeEvent {
         data class NavigateToDetails(
-            val id: String
+            val product: ProductResponseItem
         ) : HomeEvent()
 
         data class NavigateToProductsScreen(
-            val category: String
+            val category: String? = null
         ): HomeEvent()
+
+        data object NavigateToAllProductsScreen: HomeEvent()
     }
 }
