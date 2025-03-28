@@ -104,9 +104,10 @@ fun LoginScreen(
             when(event){
                 is LoginViewModel.LoginNavigationEvent.NavigateToHome -> {
                     navController.navigate(Home){
-                        popUpTo(Welcome) {
+                        popUpTo(0) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 }
 

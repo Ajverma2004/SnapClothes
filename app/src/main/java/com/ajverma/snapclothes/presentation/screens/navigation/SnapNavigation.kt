@@ -1,5 +1,6 @@
 package com.ajverma.snapclothes.presentation.screens.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -39,7 +40,7 @@ fun SnapNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     onScreenChanged: (Boolean) -> Unit,
-    viewModel: AuthOptionViewModel = hiltViewModel()
+    viewModel: AuthOptionViewModel = hiltViewModel(),
 ) {
 
     SharedTransitionLayout{

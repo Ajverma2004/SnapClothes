@@ -115,13 +115,6 @@ fun SharedTransitionScope.ProductDetailsScreen(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            SnapHeader(
-                title = "Product Details",
-                showBackButton = true,
-                onBackClick = {
-                    viewModel.onBackClicked()
-                }
-            )
 
             LazyColumn(
                 modifier = modifier

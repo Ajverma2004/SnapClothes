@@ -96,11 +96,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        SnapHeader(
-            title = "SnapClothes",
-            showFavourites = false,
-            showBackButton = false
-        )
 
         LazyColumn(
             modifier = modifier

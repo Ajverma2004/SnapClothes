@@ -89,13 +89,6 @@ fun ProductsListScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        item {
-            SnapHeader(
-                title = category?.toTitleCase() ?: "All Products",
-                showFavourites = false,
-                showBackButton = false
-            )
-        }
 
         when (val stateValue = state.value) {
             is ProductsListViewModel.ProductsListState.Loading -> {

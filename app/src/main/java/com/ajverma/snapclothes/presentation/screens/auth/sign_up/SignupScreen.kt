@@ -104,9 +104,10 @@ fun SignupScreen(
             when(event){
                 is SignupViewModel.SignupNavigationEvent.NavigateToHome -> {
                     navController.navigate(Home){
-                        popUpTo(Welcome) {
+                        popUpTo(0) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 }
 

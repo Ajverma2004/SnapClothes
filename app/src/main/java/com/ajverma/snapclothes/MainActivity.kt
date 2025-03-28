@@ -8,19 +8,34 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -28,39 +43,50 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
+import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.NavRoutes
 import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
+import com.ajverma.snapclothes.presentation.utils.widgets.SnapSearchBar
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
-import com.ajverma.snapclothes.ui.theme.SnapYellow
-import com.facebook.CallbackManager
-import com.facebook.FacebookSdk
+
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,6 +96,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var facebookAuthClient: FacebookAuthClient
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -80,24 +107,115 @@ class MainActivity : ComponentActivity() {
         }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+
+
         setContent {
             SnapClothesTheme {
-
-                val context = this
 
                 val navItems = listOf(
                     BottomNavItems.Home,
                     BottomNavItems.Favourites
                 )
 
+                var isSearchFocused by remember { mutableStateOf(false) }
                 var showBottomNav by rememberSaveable { mutableStateOf(false) }
                 val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+                val focusManager = LocalFocusManager.current
+                val keyboardController = LocalSoftwareKeyboardController.current
+                var searchText by rememberSaveable { mutableStateOf("") }
+                var isSearchActive by rememberSaveable { mutableStateOf(false) }
+                val searchFocusRequester = remember { FocusRequester() }
+
+
+                val shouldShowBackButton = when (currentRoute) {
+                    Home::class.qualifiedName -> isSearchFocused
+                    Favourites::class.qualifiedName -> false
+                    null -> false
+                    else -> true
+                }
+
+                LaunchedEffect(currentRoute) {
+                    isSearchFocused = false
+                    isSearchActive = false
+                    searchText = ""
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
+                LaunchedEffect(isSearchActive) {
+                    if (isSearchActive) {
+                        delay(100) // Let Compose settle
+                        searchFocusRequester.requestFocus()
+                    }
+                }
+
+                val imeBottomPx = WindowInsets.ime.getBottom(LocalDensity.current)
+                val keyboardHeightDp = with(LocalDensity.current) { imeBottomPx.toDp() }
+
+                val isKeyboardVisible = keyboardHeightDp > 100.dp
+
+                var wasKeyboardVisible by remember { mutableStateOf(false) }
+
+                LaunchedEffect(isKeyboardVisible) {
+                    if (wasKeyboardVisible && !isKeyboardVisible && isSearchFocused) {
+                        isSearchFocused = false
+                        isSearchActive = false
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }
+                    wasKeyboardVisible = isKeyboardVisible
+                }
+
+                BackHandler(enabled = isSearchFocused) {
+                    isSearchFocused = false
+                    isSearchActive = false
+                    searchText = ""
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                    Log.d("BackHandler", "Unfocused instead of navigating")
+                }
+
 
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                SnapSearchBar(
+                                    isSearchActive = isSearchActive,
+                                    searchText = searchText,
+                                    onSearchTextChange = { searchText = it },
+                                    onBackClick = {
+                                        if (isSearchFocused) {
+                                            isSearchFocused = false
+                                            isSearchActive = false
+                                            focusManager.clearFocus()
+                                            keyboardController?.hide()
+                                        } else {
+                                            if (navController.previousBackStackEntry != null) {
+                                                navController.popBackStack()
+                                            }
+                                        }
+                                    },
+                                    focusRequester = searchFocusRequester,
+                                    onSearchTriggered = { isSearchActive = true },
+                                    onFocusChanged = { isSearchFocused = it },
+                                    showBackButton = shouldShowBackButton
+                                )
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    },
                     bottomBar = {
-                        val currentRoute = navController.currentBackStackEntryAsState().value?.destination
+                        val currentRoute =
+                            navController.currentBackStackEntryAsState().value?.destination
                         AnimatedVisibility(visible = showBottomNav) {
                             Box(
                                 modifier = Modifier
@@ -106,7 +224,10 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier
                                         .shadow(
                                             elevation = 16.dp,
-                                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                                            shape = RoundedCornerShape(
+                                                topStart = 16.dp,
+                                                topEnd = 16.dp
+                                            ),
                                             clip = true
                                         ),
                                     containerColor = MaterialTheme.colorScheme.primary,
@@ -155,7 +276,20 @@ class MainActivity : ComponentActivity() {
                     ) {
                         SnapNavigation(
                             navController = navController,
-                            onScreenChanged = {showBottomNav = it},
+                            onScreenChanged = { showBottomNav = it },
+                            onBackWhileSearchFocused = {
+                                if (isSearchFocused) {
+                                    isSearchFocused = false
+                                    isSearchActive = false
+                                    searchText = ""
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                    Log.d("BackHandler", "Unfocused instead of navigating")
+                                    true
+                                } else {
+                                    false
+                                }
+                            }
                         )
                     }
                 }

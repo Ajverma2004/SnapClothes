@@ -90,9 +90,10 @@ fun AuthOptionScreen(
             when(event){
                 is AuthOptionViewModel.AuthNavigationEvent.NavigateToHome -> {
                     navController.navigate(Home){
-                        popUpTo(Welcome) {
+                        popUpTo(0) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 }
 
