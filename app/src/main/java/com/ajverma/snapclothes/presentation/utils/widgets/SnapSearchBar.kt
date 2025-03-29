@@ -1,7 +1,14 @@
 package com.ajverma.snapclothes.presentation.utils.widgets
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -39,7 +46,8 @@ fun SnapSearchBar(
     focusRequester: FocusRequester,
     onSearchTriggered: () -> Unit,
     onFocusChanged: (Boolean) -> Unit,
-    showBackButton: Boolean
+    showBackButton: Boolean,
+    onSearchClick: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -50,7 +58,18 @@ fun SnapSearchBar(
             .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (showBackButton) {
+
+        AnimatedVisibility(
+            visible = showBackButton,
+            enter = slideInHorizontally(
+                initialOffsetX = { -100 },
+                animationSpec = tween(durationMillis = 100) // faster
+            ) + fadeIn(animationSpec = tween(100)),
+            exit = slideOutHorizontally(
+                targetOffsetX = { -100 },
+                animationSpec = tween(durationMillis = 100)
+            ) + fadeOut(animationSpec = tween(100))
+        ) {
             IconButton(
                 onClick = {
                     onBackClick()
@@ -61,10 +80,13 @@ fun SnapSearchBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.Gray
+                    tint = Color.Black
                 )
             }
         }
+
+
+
 
 
         Spacer(modifier = Modifier.width(4.dp))
@@ -95,15 +117,17 @@ fun SnapSearchBar(
             singleLine = true,
             textStyle = TextStyle(fontSize = 14.sp),
             modifier = Modifier
+                .fillMaxWidth()
                 .weight(1f)
                 .focusRequester(focusRequester)
                 .onFocusChanged {
                     onFocusChanged(it.isFocused)
                 }
                 .height(48.dp)
+                .shadow(5.dp, RoundedCornerShape(12.dp))
+                .border(1.dp, Color.Black, RoundedCornerShape(12.dp))
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color.White)
-                .shadow(2.dp, RoundedCornerShape(12.dp)),
+                .background(Color.White),
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -115,6 +139,7 @@ fun SnapSearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
+                    onSearchClick()
                     keyboardController?.hide()
                     focusManager.clearFocus()
                 }

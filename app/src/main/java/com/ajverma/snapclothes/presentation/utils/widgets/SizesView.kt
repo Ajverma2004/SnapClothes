@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -65,7 +66,7 @@ fun SizesView(
                 Box(
                     modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                        .size(36.dp)
+                        .size(40.dp)
                         .shadow(0.dp, shape = RoundedCornerShape(3.dp))
                         .background(
                             color = if (isSelected) Color.Black else Color.Gray.copy(alpha = 0.2f),

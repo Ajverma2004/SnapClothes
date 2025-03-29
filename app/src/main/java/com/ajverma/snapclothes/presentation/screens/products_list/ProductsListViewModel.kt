@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductsListViewModel @Inject constructor(
     private val repository: ProductsListRepository,
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
 ): ViewModel() {
 
     private val _state = MutableStateFlow<ProductsListState>(ProductsListState.Loading)
@@ -46,6 +46,31 @@ class ProductsListViewModel @Inject constructor(
             }
         }
     }
+
+    fun search(query: String) {
+        viewModelScope.launch {
+            _state.value = ProductsListState.Loading
+
+            val result = repository.search(query)
+
+            when (result) {
+                is Resource.Success -> {
+                    val products = result.data
+                    if (products is List<*> && products.all { it is ProductResponseItem }) {
+                        _state.value = ProductsListState.Success(products.filterIsInstance<ProductResponseItem>())
+                    } else {
+                        // If the backend sends { "message": "No items..." }, fallback to empty
+                        _state.value = ProductsListState.Success(emptyList())
+                    }
+                }
+
+                is Resource.Error -> {
+                    _state.value = ProductsListState.Error(result.message)
+                }
+            }
+        }
+    }
+
 
     fun getProducts(){
         viewModelScope.launch(Dispatchers.IO) {

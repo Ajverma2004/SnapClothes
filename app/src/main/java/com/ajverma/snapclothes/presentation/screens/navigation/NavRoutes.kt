@@ -16,7 +16,8 @@ object AuthOption : NavRoutes
 
 @Serializable
 data class ProductList(
-    val category: String? = null
+    val category: String? = null,
+    val query: String? = null
 ) : NavRoutes
 
 @Serializable

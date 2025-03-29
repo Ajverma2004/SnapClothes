@@ -9,6 +9,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,16 +58,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.data.network.models.BannerResponseItem
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.presentation.utils.widgets.NameToColor
@@ -217,6 +223,10 @@ fun SharedTransitionScope.ProductDetailsScreen(
                             )
                         }
 
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+
 
                         item {
                             Box(
@@ -269,7 +279,7 @@ fun SharedTransitionScope.ProductDetailsScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(start = 16.dp, bottom = 16.dp, end = 16.dp, top = 16.dp)
+                    .padding(start = 16.dp, bottom = 110.dp, end = 16.dp, top = 16.dp)
             ) {
                 FloatingTryARButton()
             }
@@ -278,7 +288,7 @@ fun SharedTransitionScope.ProductDetailsScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(start = 16.dp, bottom = 100.dp, end = 16.dp, top = 16.dp)
+                    .padding(start = 16.dp, bottom = 30.dp, end = 16.dp, top = 16.dp)
             ) {
                 FloatingBuyNowButton()
             }
@@ -289,11 +299,18 @@ fun SharedTransitionScope.ProductDetailsScreen(
 
 @Composable
 fun BuyNowButton() {
-    androidx.compose.material3.Button(
+    Button(
         onClick = { /* Handle buy action */ },
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .padding(start = 7.dp, end = 7.dp, bottom = 10.dp)
+            .height(50.dp)
+            .shadow(
+                elevation = 3.dp,
+                shape = RoundedCornerShape(8.dp),
+            )
+            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+        ,
         shape = RoundedCornerShape(8.dp)
     ) {
         Text("Buy Now")
@@ -303,53 +320,105 @@ fun BuyNowButton() {
 @Composable
 fun TryARButton() {
     Button(
-        onClick = { /* Handle buy action */ },
+        onClick = { /* Handle AR try-on */ },
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(8.dp)
+            .padding(horizontal = 7.dp)
+            .height(50.dp)
+            .shadow(
+                elevation = 3.dp,
+                shape = RoundedCornerShape(8.dp),
+            )
+            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+        ,
+        shape = RoundedCornerShape(8.dp),
+        contentPadding = PaddingValues(0.dp) // Remove default padding to align image
     ) {
-        Text("Try On")
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            // Background Image
+            Image(
+                painter = painterResource(id = R.drawable.space),
+                contentDescription = "Space Background",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .matchParentSize()
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                // Centered Text
+                Text(
+                    text = "Try On",
+                    color = Color.White,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.clothing),
+                    contentDescription = "AR Icon",
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
     }
 }
 
+
 @Composable
 fun FloatingBuyNowButton() {
-    IconButton(
-        onClick = { /* Handle buy action */ },
+    Box(
         modifier = Modifier
-            .width(70.dp)
-            .height(70.dp)
+            .size(70.dp)
             .clip(CircleShape)
-        ,
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = SnapYellow
-        ),
+            .border(1.dp, Color.Black, shape = CircleShape)
+            .background(MaterialTheme.colorScheme.primary)
+            .clickable { /* Handle AR Try-On */ }
     ) {
-        Icon(
-            imageVector = Icons.Default.ThumbUp,
-            contentDescription = null,
-            tint = Color.Black
+
+        // Foreground AR icon
+        Image(
+            painter = painterResource(id = R.drawable.buy),
+            contentDescription = "Try AR",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp),
+            colorFilter = ColorFilter.tint(Color.Black)
         )
     }
 }
 
 @Composable
 fun FloatingTryARButton() {
-    IconButton(
-        onClick = { /* Handle buy action */ },
+    Box(
         modifier = Modifier
-            .width(70.dp)
-            .height(70.dp)
-            .clip(CircleShape),
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = SnapYellow
-        )
+            .size(70.dp)
+            .clip(CircleShape)
+            .background(Color.Transparent)
+            .clickable { /* Handle AR Try-On */ }
     ) {
-        Icon(
-            imageVector = Icons.Default.LocationOn,
-            contentDescription = null,
-            tint = Color.Black
+        // Background image
+        Image(
+            painter = painterResource(id = R.drawable.space),
+            contentDescription = "AR Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize()
+        )
+
+        // Foreground AR icon
+        Image(
+            painter = painterResource(id = R.drawable.clothing), // Your AR icon here
+            contentDescription = "Try AR",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp),
+            colorFilter = ColorFilter.tint(Color.White)
         )
     }
 }

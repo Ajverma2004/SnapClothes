@@ -34,4 +34,6 @@ abstract class RepositoryModule {
         productDetailsRepositoryImpl: ProductDetailsRepositoryImpl
     ): ProductDetailsRepository
 
+
+
 }

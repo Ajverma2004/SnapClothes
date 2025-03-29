@@ -30,5 +30,10 @@ interface SnapApi {
         @Path("productId") productId: String
     ): ProductResponseItem
 
+    @GET("search")
+    suspend fun search(
+        @Query("query") query: String
+    ): ProductResponse
+
 
 }

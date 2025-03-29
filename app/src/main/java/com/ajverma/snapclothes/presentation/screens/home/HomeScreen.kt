@@ -225,12 +225,21 @@ fun HomeScreen(
     }
 }
 
-fun productListRoute(category: String? = null): String {
-    return if (category != null) {
-        "ProductList?category=$category"
+fun productListRoute(
+    category: String? = null,
+    query: String? = null
+): String {
+    val base = "ProductList"
+    val params = mutableListOf<String>()
+    category?.let { params.add("category=$it") }
+    query?.let { params.add("query=$it") }
+
+    return if (params.isNotEmpty()) {
+        "$base?${params.joinToString("&")}"
     } else {
-        "ProductList"
+        base
     }
 }
+
 
 

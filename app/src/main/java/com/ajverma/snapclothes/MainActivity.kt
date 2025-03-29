@@ -1,11 +1,7 @@
 package com.ajverma.snapclothes
 
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -13,44 +9,40 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,29 +55,32 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
+import com.ajverma.snapclothes.presentation.screens.home.productListRoute
 import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.NavRoutes
+import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
 import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
-import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
+import com.ajverma.snapclothes.presentation.utils.widgets.BasicDialog
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapSearchBar
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
 
 
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -179,8 +174,6 @@ class MainActivity : ComponentActivity() {
                     Log.d("BackHandler", "Unfocused instead of navigating")
                 }
 
-
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -205,7 +198,14 @@ class MainActivity : ComponentActivity() {
                                     focusRequester = searchFocusRequester,
                                     onSearchTriggered = { isSearchActive = true },
                                     onFocusChanged = { isSearchFocused = it },
-                                    showBackButton = shouldShowBackButton
+                                    showBackButton = shouldShowBackButton,
+                                    onSearchClick = {
+                                        navController.navigate(productListRoute(query = searchText))
+                                        searchText = ""
+                                        isSearchActive = false
+                                        focusManager.clearFocus()
+                                        keyboardController?.hide()
+                                    }
                                 )
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
@@ -219,53 +219,41 @@ class MainActivity : ComponentActivity() {
                         AnimatedVisibility(visible = showBottomNav) {
                             Box(
                                 modifier = Modifier
+                                    .fillMaxWidth()
+                                    .windowInsetsPadding(WindowInsets.Companion.navigationBars)
+                                    .height(56.dp) // 👈 Shorter height
+                                    .shadow(
+                                        elevation = 16.dp,
+                                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                                        clip = true
+                                    )
+                                    .background(MaterialTheme.colorScheme.primary)
                             ) {
-                                NavigationBar(
+                                Row(
                                     modifier = Modifier
-                                        .shadow(
-                                            elevation = 16.dp,
-                                            shape = RoundedCornerShape(
-                                                topStart = 16.dp,
-                                                topEnd = 16.dp
-                                            ),
-                                            clip = true
-                                        ),
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = Color.White,
-                                    tonalElevation = 0.dp,
+                                        .fillMaxSize(),
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     navItems.forEach { item ->
-                                        val selected =
-                                            currentRoute?.hierarchy?.any { it.route == item.route::class.qualifiedName } == true
+                                        val selected = currentRoute?.hierarchy?.any {
+                                            it.route == item.route::class.qualifiedName
+                                        } == true
 
-                                        NavigationBarItem(
-                                            selected = selected,
-                                            onClick = {
-                                                navController.navigate(item.route)
-                                            },
-                                            icon = {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(48.dp)
-                                                        .clip(RoundedCornerShape(12.dp))
-                                                ) {
-                                                    Icon(
-                                                        imageVector = item.icon,
-                                                        contentDescription = null,
-                                                        tint = if (selected) Color.Black else Color.Gray,
-                                                        modifier = Modifier.align(Alignment.Center)
-                                                    )
-                                                }
-                                            },
-                                            colors = NavigationBarItemDefaults.colors(
-                                                indicatorColor = Color.White,
-                                                selectedIconColor = Color.Black,
-                                                unselectedIconColor = Color.Gray
+                                        IconButton(onClick = {
+                                            navController.navigate(item.route)
+                                        }) {
+                                            Icon(
+                                                imageVector = item.icon,
+                                                contentDescription = null,
+                                                tint = if (selected) Color.Black else Color.Gray,
+                                                modifier = Modifier.size(24.dp)
                                             )
-                                        )
+                                        }
                                     }
                                 }
                             }
+
                         }
                     }
                 ) { innerPadding ->
@@ -281,7 +269,6 @@ class MainActivity : ComponentActivity() {
                                 if (isSearchFocused) {
                                     isSearchFocused = false
                                     isSearchActive = false
-                                    searchText = ""
                                     focusManager.clearFocus()
                                     keyboardController?.hide()
                                     Log.d("BackHandler", "Unfocused instead of navigating")

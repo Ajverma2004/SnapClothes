@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -52,16 +53,18 @@ fun ProductsListScreen(
     viewModel: ProductsListViewModel = hiltViewModel(),
     navController: NavController,
     category: String? = null,
+    query: String? = null
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state) {
-        if (category != null) {
-            viewModel.getProductsByCategory(category)
-        } else {
-            viewModel.getProducts()
+    LaunchedEffect(category, query) {
+        when {
+            query != null -> viewModel.search(query)
+            category != null -> viewModel.getProductsByCategory(category)
+            else -> viewModel.getProducts()
         }
     }
+
 
     LaunchedEffect(key1 = Unit) {
         viewModel.event.collectLatest { event ->
@@ -102,10 +105,10 @@ fun ProductsListScreen(
                     SnapError(
                         error = stateValue.message,
                         onRetry = {
-                            if (category != null) {
-                                viewModel.getProductsByCategory(category)
-                            } else {
-                                viewModel.getProducts()
+                            when {
+                                query != null -> viewModel.search(query)
+                                category != null -> viewModel.getProductsByCategory(category)
+                                else -> viewModel.getProducts()
                             }
                         }
                     )
@@ -114,24 +117,35 @@ fun ProductsListScreen(
 
             is ProductsListViewModel.ProductsListState.Success -> {
 
-                item {
-                    BackButtonWithCategoryName(
-                        category = category,
-                        onBackClicked = {
-                            viewModel.onBackClicked()
+
+                if (stateValue.products.isEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "No items found",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
                         }
+                    }
+                } else {
+                    item {
+                        Spacer(Modifier.height(10.dp))
+                    }
+
+                    ProductsView(
+                        products = stateValue.products,
+                        onProductClick = {
+                            viewModel.onProductClicked(it)
+                        },
                     )
                 }
-                item {
-                    Spacer(Modifier.height(10.dp))
-                }
-
-                ProductsView(
-                    products = stateValue.products,
-                    onProductClick = {
-                        viewModel.onProductClicked(it)
-                    },
-                )
 
             }
 
