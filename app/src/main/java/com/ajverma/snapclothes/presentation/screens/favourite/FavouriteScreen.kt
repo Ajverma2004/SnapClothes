@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +61,7 @@ fun FavouriteScreen(
                         price = it.price,
                         rating = it.rating,
                         image_urls = it.image_urls,
-                        arlink = "",
+                        lensID = "",
                         brand = "",
                         buyLink = "",
                         category = "",

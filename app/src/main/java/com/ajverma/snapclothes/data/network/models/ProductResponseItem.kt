@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProductResponseItem(
     val _id: String,
-    val arlink: String,
+    val lensID: String? = null,
     val brand: String,
     val buyLink: String,
     val category: String,

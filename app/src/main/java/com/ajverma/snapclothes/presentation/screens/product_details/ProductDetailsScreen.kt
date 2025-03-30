@@ -1,5 +1,8 @@
 package com.ajverma.snapclothes.presentation.screens.product_details
 
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -64,6 +67,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,6 +76,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.ajverma.snapclothes.CameraActivity
 import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.data.network.models.BannerResponseItem
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
@@ -86,6 +91,7 @@ import com.ajverma.snapclothes.ui.theme.SnapYellow
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collectLatest
 import java.util.jar.Attributes.Name
 
@@ -99,6 +105,8 @@ fun SharedTransitionScope.ProductDetailsScreen(
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val lensId = (state.value as? ProductDetailsViewModel.ProductDetailsState.Success)?.data?.lensID
+    Log.d("lensId", lensId.toString())
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getProductDetails(productId)
@@ -152,6 +160,8 @@ fun SharedTransitionScope.ProductDetailsScreen(
                     }
 
                     is ProductDetailsViewModel.ProductDetailsState.Success -> {
+
+                        val lensID = stateValue.data.lensID
 
                         item {
                             Row(
@@ -233,13 +243,20 @@ fun SharedTransitionScope.ProductDetailsScreen(
 
 
                         item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                TryARButton()
+                            if (!lensId.isNullOrBlank()) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (lensID != null) {
+                                        TryARButton(
+                                            lensID = lensID,
+                                            context = LocalContext.current
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -279,13 +296,15 @@ fun SharedTransitionScope.ProductDetailsScreen(
         }
 
 
-        if (!isTryButtonVisible) {
+        if (!lensId.isNullOrBlank() && !isTryButtonVisible) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(start = 16.dp, bottom = 110.dp, end = 16.dp, top = 16.dp)
             ) {
-                FloatingTryARButton()
+                if (!lensId.isNullOrBlank()) {
+                    FloatingTryARButton(lensId = lensId)
+                }
             }
         }
         if (!isBuyButtonVisible) {
@@ -322,9 +341,14 @@ fun BuyNowButton() {
 }
 
 @Composable
-fun TryARButton() {
+fun TryARButton(
+    lensID: String,
+    context: Context
+) {
     Button(
-        onClick = { /* Handle AR try-on */ },
+        onClick = {
+            startCamera(lensID, context)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 7.dp)
@@ -399,13 +423,18 @@ fun FloatingBuyNowButton() {
 }
 
 @Composable
-fun FloatingTryARButton() {
+fun FloatingTryARButton(
+    lensId: String
+) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .size(70.dp)
             .clip(CircleShape)
             .background(Color.Transparent)
-            .clickable { /* Handle AR Try-On */ }
+            .clickable {
+                    startCamera(lensId, context)
+            }
     ) {
         // Background image
         Image(
@@ -590,4 +619,13 @@ fun PriceAndExpandableDescription(
                 .clickable { expanded = !expanded }
         )
     }
+}
+
+
+fun startCamera(lensId: String, @ApplicationContext context: Context){
+
+    val intent = Intent(context, CameraActivity::class.java).apply {
+        putExtra("LENS_ID", lensId)
+    }
+    context.startActivity(intent)
 }

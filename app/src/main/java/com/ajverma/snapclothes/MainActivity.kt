@@ -67,11 +67,15 @@ import androidx.navigation.compose.rememberNavController
 import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
+import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
 import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
+import com.ajverma.snapclothes.presentation.screens.navigation.Login
 import com.ajverma.snapclothes.presentation.screens.navigation.NavRoutes
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
+import com.ajverma.snapclothes.presentation.screens.navigation.SignUp
 import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
+import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
 import com.ajverma.snapclothes.presentation.utils.widgets.BasicDialog
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapSearchBar
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
@@ -87,6 +91,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var showSplashScreen = true
+
     @Inject
     lateinit var facebookAuthClient: FacebookAuthClient
 
@@ -143,6 +148,14 @@ class MainActivity : ComponentActivity() {
                     else -> true
                 }
 
+                val topBarExcludedRoutes = listOf(
+                    Login::class.qualifiedName,
+                    AuthOption::class.qualifiedName,
+                    Welcome::class.qualifiedName,
+                    SignUp::class.qualifiedName,
+                )
+
+
                 LaunchedEffect(currentRoute) {
                     isSearchFocused = false
                     isSearchActive = false
@@ -152,7 +165,7 @@ class MainActivity : ComponentActivity() {
                 }
                 LaunchedEffect(isSearchActive) {
                     if (isSearchActive) {
-                        delay(100) // Let Compose settle
+                        delay(100)
                         searchFocusRequester.requestFocus()
                     }
                 }
@@ -186,41 +199,43 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        TopAppBar(
-                            title = {
-                                SnapSearchBar(
-                                    isSearchActive = isSearchActive,
-                                    searchText = searchText,
-                                    onSearchTextChange = { searchText = it },
-                                    onBackClick = {
-                                        if (isSearchFocused) {
-                                            isSearchFocused = false
+                        if (currentRoute !in topBarExcludedRoutes) {
+                            TopAppBar(
+                                title = {
+                                    SnapSearchBar(
+                                        isSearchActive = isSearchActive,
+                                        searchText = searchText,
+                                        onSearchTextChange = { searchText = it },
+                                        onBackClick = {
+                                            if (isSearchFocused) {
+                                                isSearchFocused = false
+                                                isSearchActive = false
+                                                focusManager.clearFocus()
+                                                keyboardController?.hide()
+                                            } else {
+                                                if (navController.previousBackStackEntry != null) {
+                                                    navController.popBackStack()
+                                                }
+                                            }
+                                        },
+                                        focusRequester = searchFocusRequester,
+                                        onSearchTriggered = { isSearchActive = true },
+                                        onFocusChanged = { isSearchFocused = it },
+                                        showBackButton = shouldShowBackButton,
+                                        onSearchClick = {
+                                            navController.navigate(productListRoute(query = searchText))
+                                            searchText = ""
                                             isSearchActive = false
                                             focusManager.clearFocus()
                                             keyboardController?.hide()
-                                        } else {
-                                            if (navController.previousBackStackEntry != null) {
-                                                navController.popBackStack()
-                                            }
                                         }
-                                    },
-                                    focusRequester = searchFocusRequester,
-                                    onSearchTriggered = { isSearchActive = true },
-                                    onFocusChanged = { isSearchFocused = it },
-                                    showBackButton = shouldShowBackButton,
-                                    onSearchClick = {
-                                        navController.navigate(productListRoute(query = searchText))
-                                        searchText = ""
-                                        isSearchActive = false
-                                        focusManager.clearFocus()
-                                        keyboardController?.hide()
-                                    }
+                                    )
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.primary
                                 )
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primary
                             )
-                        )
+                        }
                     },
                     bottomBar = {
                         val currentRoute =

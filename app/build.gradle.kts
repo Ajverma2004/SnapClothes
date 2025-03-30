@@ -19,6 +19,9 @@ if (localPropertiesFile.exists()) {
 }
 
 val googleWebClientId = localProperties["GOOGLE_WEB_CLIENT_ID"] as String
+val lensGroupId = localProperties["LENS_GROUP_ID"] as String
+val snapApiToken = localProperties["SNAP_API_TOKEN"] as String
+val facebookClientToken = localProperties["FACEBOOK_CLIENT_TOKEN"] as String
 
 
 android {
@@ -33,7 +36,12 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        manifestPlaceholders["snapApiToken"] = snapApiToken
+        manifestPlaceholders["facebookClientToken"] = facebookClientToken
+
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
+        buildConfigField("String", "LENS_GROUP_ID", "\"$lensGroupId\"")
+        buildConfigField("String", "SNAP_API_TOKEN", "\"$snapApiToken\"")
     }
 
     buildTypes {
@@ -95,7 +103,14 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    // Snap Camera Kit
+    implementation("com.snap.camerakit:camerakit:1.39.0")
+    implementation("com.snap.camerakit:lenses-bundle:1.39.0")
+    implementation("com.snap.camerakit:support-camerax:1.39.0")
+    implementation("com.snap.camerakit:support-camera-layout:1.39.0")
 
+    // Permissions handling
+    implementation("com.google.accompanist:accompanist-permissions:0.37.2")
 
     //navigation
     implementation (libs.androidx.navigation.compose)
