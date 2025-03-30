@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -64,6 +65,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
+import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
 import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
@@ -73,8 +75,6 @@ import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
 import com.ajverma.snapclothes.presentation.utils.widgets.BasicDialog
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapSearchBar
 import com.ajverma.snapclothes.ui.theme.SnapClothesTheme
-
-
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +87,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var showSplashScreen = true
-
     @Inject
     lateinit var facebookAuthClient: FacebookAuthClient
 
@@ -106,6 +105,15 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = android.graphics.Color.TRANSPARENT
 
+        val homeViewModel: HomeViewModel by viewModels()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            homeViewModel.getProducts()
+            homeViewModel.getCategories()
+            homeViewModel.getBanners()
+            delay(2000)
+            showSplashScreen = false
+        }
 
         setContent {
             SnapClothesTheme {
@@ -114,6 +122,7 @@ class MainActivity : ComponentActivity() {
                     BottomNavItems.Home,
                     BottomNavItems.Favourites
                 )
+
 
                 var isSearchFocused by remember { mutableStateOf(false) }
                 var showBottomNav by rememberSaveable { mutableStateOf(false) }
@@ -224,8 +233,6 @@ class MainActivity : ComponentActivity() {
                                     .height(56.dp) // 👈 Shorter height
                                     .shadow(
                                         elevation = 16.dp,
-                                        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                                        clip = true
                                     )
                                     .background(MaterialTheme.colorScheme.primary)
                             ) {
@@ -281,11 +288,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(2000)
-            showSplashScreen = false
         }
     }
 

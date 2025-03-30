@@ -54,6 +54,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +75,8 @@ import coil3.compose.AsyncImage
 import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.data.network.models.BannerResponseItem
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
+import com.ajverma.snapclothes.database.FavouriteProduct
+import com.ajverma.snapclothes.presentation.screens.favourite.FavouriteViewModel
 import com.ajverma.snapclothes.presentation.utils.widgets.NameToColor
 import com.ajverma.snapclothes.presentation.utils.widgets.SizesView
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapError
@@ -196,7 +199,8 @@ fun SharedTransitionScope.ProductDetailsScreen(
                         item {
                             ImageViewer(
                                 imagesList = stateValue.data.image_urls,
-                                productId = productId
+                                productId = productId,
+                                productDetails = stateValue.data
                             )
                         }
 
@@ -430,7 +434,9 @@ fun ImageViewer(
     modifier: Modifier = Modifier,
     imagesList: List<String>,
     productId: String,
+    productDetails: ProductResponseItem
 ) {
+
     val pagerState = rememberPagerState(0) {
         imagesList.size
     }
@@ -477,7 +483,7 @@ fun ImageViewer(
             ),
             modifier = Modifier.align(Alignment.Center)
         )
-        FavoriteIconWithToggle()
+        FavoriteIconWithToggle(productDetails)
     }
 
 
@@ -487,9 +493,17 @@ fun ImageViewer(
 
 
 @Composable
-fun BoxScope.FavoriteIconWithToggle() {
+fun BoxScope.FavoriteIconWithToggle(
+    productDetails: ProductResponseItem,
+    favouriteViewModel: FavouriteViewModel = hiltViewModel()
+) {
     var isFavorite by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(productDetails._id) {
+        isFavorite = favouriteViewModel.isFavourite(productDetails._id)
+    }
 
     Icon(
         imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -502,8 +516,18 @@ fun BoxScope.FavoriteIconWithToggle() {
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 isFavorite = !isFavorite
+                favouriteViewModel.toggleFavourite(
+                    isFav = isFavorite,
+                    product = FavouriteProduct(
+                        id = productDetails._id,
+                        name = productDetails.name,
+                        price = productDetails.price,
+                        rating = productDetails.rating,
+                        image_urls = productDetails.image_urls
+                    )
+                )
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             }
     )
 }

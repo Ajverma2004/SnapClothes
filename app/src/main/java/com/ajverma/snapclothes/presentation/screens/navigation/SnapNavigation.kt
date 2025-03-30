@@ -21,6 +21,7 @@ import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionS
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel
 import com.ajverma.snapclothes.presentation.screens.auth.login.LoginScreen
 import com.ajverma.snapclothes.presentation.screens.auth.sign_up.SignupScreen
+import com.ajverma.snapclothes.presentation.screens.favourite.FavouriteScreen
 import com.ajverma.snapclothes.presentation.screens.home.HomeScreen
 import com.ajverma.snapclothes.presentation.screens.product_details.ProductDetailsScreen
 import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListScreen
@@ -62,12 +63,9 @@ fun SnapNavigation(
 
             composable<Favourites> {
                 onScreenChanged(true)
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "Favourites", color = Color.Black)
-                }
+                FavouriteScreen(
+                    navController = navController
+                )
             }
 
             composable<Home> {

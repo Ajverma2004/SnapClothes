@@ -11,8 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.setSingletonImageLoaderFactory
+import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
 import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
 import com.ajverma.snapclothes.ui.theme.SnapYellow
 import io.github.sceneview.Scene
@@ -38,7 +40,16 @@ import io.github.sceneview.rememberView
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getProducts()
+        viewModel.getCategories()
+        viewModel.getBanners()
+    }
+
+
     // SceneView setup
     val engine = rememberEngine()
     val view = rememberView(engine)

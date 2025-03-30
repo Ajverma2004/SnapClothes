@@ -90,6 +90,12 @@ dependencies {
     //splash screen
     implementation(libs.core.splashscreen)
 
+    //room DB
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+
 
     //navigation
     implementation (libs.androidx.navigation.compose)
