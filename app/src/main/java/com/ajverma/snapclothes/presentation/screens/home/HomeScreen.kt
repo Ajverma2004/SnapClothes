@@ -37,14 +37,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.ajverma.snapclothes.presentation.screens.auth.AuthBaseViewModel
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
+import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
 import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListViewModel
 import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapBanner
@@ -54,6 +57,7 @@ import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapLoading
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapOutlinedText
 import com.ajverma.snapclothes.ui.theme.SnapYellow
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -136,7 +140,10 @@ fun HomeScreen(
 
                     item {
                         SnapBanner(
-                            bannerList = bannersList.value
+                            bannerList = bannersList.value,
+                            onBannerClick = {
+                                viewModel.onCategoryClicked(it)
+                            }
                         )
                     }
 
@@ -219,10 +226,40 @@ fun HomeScreen(
                         },
                     )
 
+                    item {
+                        LogOutButton(navController)
+                    }
+
                 }
             }
         }
     }
+}
+
+@Composable
+fun LogOutButton(
+    navController: NavController,
+) {
+    Text(
+        text = "LOG OUT",
+        style = MaterialTheme.typography.labelSmall,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                FirebaseAuth.getInstance().signOut()
+                navController.navigate(Welcome){
+                    popUpTo(0){
+                        inclusive = true
+                    }
+                }
+            }
+            .padding(top = 30.dp, bottom = 7.dp),
+        textAlign = TextAlign.Center,
+        color = Color(0xFFFFBD00),
+    )
 }
 
 fun productListRoute(

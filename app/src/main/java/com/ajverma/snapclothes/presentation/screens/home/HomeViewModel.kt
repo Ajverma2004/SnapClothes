@@ -20,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: HomeRepository,
+
 ): ViewModel() {
 
     private val _state = MutableStateFlow<HomeState>(HomeState.Loading)
@@ -111,6 +112,7 @@ class HomeViewModel @Inject constructor(
             _event.emit(HomeEvent.NavigateToDetails(productId))
         }
     }
+
 
 
 

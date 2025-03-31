@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.snapclothes.domain.utils.toTitleCase
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
+import com.ajverma.snapclothes.presentation.utils.mapper.nameFromCategory
 import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapError
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
@@ -53,7 +54,7 @@ fun ProductsListScreen(
     viewModel: ProductsListViewModel = hiltViewModel(),
     navController: NavController,
     category: String? = null,
-    query: String? = null
+    query: String? = null,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -117,6 +118,13 @@ fun ProductsListScreen(
 
             is ProductsListViewModel.ProductsListState.Success -> {
 
+                item {
+                    BackButtonWithCategoryName(
+                        category = category,
+                        query = query
+                    )
+                }
+
 
                 if (stateValue.products.isEmpty()) {
                     item {
@@ -159,7 +167,7 @@ fun ProductsListScreen(
 fun BackButtonWithCategoryName(
     modifier: Modifier = Modifier,
     category: String? = null,
-    onBackClicked: () -> Unit,
+    query: String? = null
 ) {
     Column {
         Row(
@@ -170,30 +178,17 @@ fun BackButtonWithCategoryName(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
-                ) {
-                    onBackClicked()
-                },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = null,
-                    tint = Color.Black
-                )
+            Spacer(Modifier.size(3.dp))
 
-                Spacer(Modifier.size(3.dp))
-
-                Text(
-                    text = category?.toTitleCase() ?: "Back To Home",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            Text(
+                text = if (query != null) "Search for '\'${query}\''"
+                    else if(category != null) nameFromCategory(category)
+                    else "All Products",
+                color = Color.Black,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(start = 10.dp)
+            )
         }
 
         HorizontalDivider(Modifier.fillMaxWidth())

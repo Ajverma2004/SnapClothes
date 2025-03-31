@@ -37,7 +37,7 @@ import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 fun SnapBanner(
     modifier: Modifier = Modifier,
     bannerList: List<BannerResponseItem>,
-    onBannerClick: () -> Unit = {},
+    onBannerClick: (String) -> Unit = {},
 ) {
 
 
@@ -72,7 +72,7 @@ fun SnapBanner(
                     .padding(top = 10.dp, start = 10.dp, end = 10.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .clickable {
-                        onBannerClick()
+                        onBannerClick(bannerList[it].category)
                     }
             )
         }

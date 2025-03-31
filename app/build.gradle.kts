@@ -104,13 +104,13 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // Snap Camera Kit
-    implementation("com.snap.camerakit:camerakit:1.39.0")
-    implementation("com.snap.camerakit:lenses-bundle:1.39.0")
-    implementation("com.snap.camerakit:support-camerax:1.39.0")
-    implementation("com.snap.camerakit:support-camera-layout:1.39.0")
+    implementation(libs.camerakit)
+    implementation(libs.lenses.bundle)
+    implementation(libs.support.camerax)
+    implementation(libs.support.camera.layout)
 
     // Permissions handling
-    implementation("com.google.accompanist:accompanist-permissions:0.37.2")
+    implementation(libs.accompanist.permissions)
 
     //navigation
     implementation (libs.androidx.navigation.compose)

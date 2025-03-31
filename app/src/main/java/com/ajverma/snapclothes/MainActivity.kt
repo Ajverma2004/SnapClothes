@@ -128,6 +128,10 @@ class MainActivity : ComponentActivity() {
                     BottomNavItems.Favourites
                 )
 
+                val bottomNavRoutes = listOf(Home, Favourites)
+                val previousBottomRoute = remember { mutableStateOf<NavRoutes?>(null) }
+
+
 
                 var isSearchFocused by remember { mutableStateOf(false) }
                 var showBottomNav by rememberSaveable { mutableStateOf(false) }
@@ -263,7 +267,14 @@ class MainActivity : ComponentActivity() {
                                         } == true
 
                                         IconButton(onClick = {
-                                            navController.navigate(item.route)
+                                            val routeString = currentRoute?.route
+                                            previousBottomRoute.value = bottomNavRoutes.find { it::class.qualifiedName == routeString }
+
+                                            navController.navigate(item.route) {
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+
                                         }) {
                                             Icon(
                                                 imageVector = item.icon,
