@@ -2,7 +2,9 @@ package com.ajverma.snapclothes.presentation.screens.product_details
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -106,6 +108,7 @@ fun SharedTransitionScope.ProductDetailsScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     val lensId = (state.value as? ProductDetailsViewModel.ProductDetailsState.Success)?.data?.lensID
+    val amazonLink = (state.value as? ProductDetailsViewModel.ProductDetailsState.Success)?.data?.buyLink
     Log.d("lensId", lensId.toString())
 
     LaunchedEffect(key1 = Unit) {
@@ -162,6 +165,7 @@ fun SharedTransitionScope.ProductDetailsScreen(
                     is ProductDetailsViewModel.ProductDetailsState.Success -> {
 
                         val lensID = stateValue.data.lensID
+                        val amazonLink = stateValue.data.buyLink
 
                         item {
                             Row(
@@ -267,7 +271,9 @@ fun SharedTransitionScope.ProductDetailsScreen(
                                     .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                BuyNowButton()
+                                BuyNowButton(
+                                    amazonUrl = amazonLink
+                                )
                             }
                         }
 
@@ -313,7 +319,9 @@ fun SharedTransitionScope.ProductDetailsScreen(
                     .align(Alignment.BottomEnd)
                     .padding(start = 16.dp, bottom = 30.dp, end = 16.dp, top = 16.dp)
             ) {
-                FloatingBuyNowButton()
+                FloatingBuyNowButton(
+                    amazonUrl = amazonLink ?: ""
+                )
             }
         }
     }
@@ -321,9 +329,14 @@ fun SharedTransitionScope.ProductDetailsScreen(
 
 
 @Composable
-fun BuyNowButton() {
+fun BuyNowButton(
+    amazonUrl: String
+) {
+    val context = LocalContext.current
     Button(
-        onClick = { /* Handle buy action */ },
+        onClick = {
+            openAmazonLink(context, amazonUrl)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 7.dp, end = 7.dp, bottom = 10.dp)
@@ -400,14 +413,19 @@ fun TryARButton(
 
 
 @Composable
-fun FloatingBuyNowButton() {
+fun FloatingBuyNowButton(
+    amazonUrl: String
+) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .size(70.dp)
             .clip(CircleShape)
             .border(1.dp, Color.Black, shape = CircleShape)
             .background(MaterialTheme.colorScheme.primary)
-            .clickable { /* Handle AR Try-On */ }
+            .clickable {
+                openAmazonLink(context, amazonUrl)
+            }
     ) {
 
         // Foreground AR icon
@@ -433,7 +451,7 @@ fun FloatingTryARButton(
             .clip(CircleShape)
             .background(Color.Transparent)
             .clickable {
-                    startCamera(lensId, context)
+                startCamera(lensId, context)
             }
     ) {
         // Background image
@@ -623,9 +641,18 @@ fun PriceAndExpandableDescription(
 
 
 fun startCamera(lensId: String, @ApplicationContext context: Context){
-
     val intent = Intent(context, CameraActivity::class.java).apply {
         putExtra("LENS_ID", lensId)
     }
     context.startActivity(intent)
+}
+
+fun openAmazonLink(context: Context, amazonUrl: String){
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(amazonUrl)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+
+    val chooser = Intent.createChooser(intent, "Open with")
+    context.startActivity(chooser)
 }
