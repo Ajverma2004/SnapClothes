@@ -26,6 +26,9 @@ data class ProductDetails(
 ) : NavRoutes
 
 @Serializable
+object ChatBot : NavRoutes
+
+@Serializable
 object Login : NavRoutes
 
 @Serializable

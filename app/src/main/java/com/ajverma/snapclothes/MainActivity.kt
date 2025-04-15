@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -68,6 +69,7 @@ import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
 import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
+import com.ajverma.snapclothes.presentation.screens.navigation.ChatBot
 import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.Login
@@ -125,7 +127,8 @@ class MainActivity : ComponentActivity() {
 
                 val navItems = listOf(
                     BottomNavItems.Home,
-                    BottomNavItems.Favourites
+                    BottomNavItems.Favourites,
+                    BottomNavItems.ChatBot
                 )
 
                 val bottomNavRoutes = listOf(Home, Favourites)
@@ -157,6 +160,7 @@ class MainActivity : ComponentActivity() {
                     AuthOption::class.qualifiedName,
                     Welcome::class.qualifiedName,
                     SignUp::class.qualifiedName,
+                    ChatBot::class.qualifiedName
                 )
 
 
@@ -293,6 +297,7 @@ class MainActivity : ComponentActivity() {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .background(Color.White)
                             .padding(innerPadding),
                     ) {
                         SnapNavigation(
@@ -327,6 +332,11 @@ class MainActivity : ComponentActivity() {
         data object Favourites : BottomNavItems(
             com.ajverma.snapclothes.presentation.screens.navigation.Favourites,
             Icons.Filled.Favorite
+        )
+
+        data object ChatBot : BottomNavItems(
+            com.ajverma.snapclothes.presentation.screens.navigation.ChatBot,
+            Icons.Filled.Person
         )
     }
 

@@ -44,7 +44,7 @@ fun SnapSearchBar(
     onSearchTriggered: () -> Unit,
     onFocusChanged: (Boolean) -> Unit,
     showBackButton: Boolean,
-    onSearchClick: () -> Unit,
+    onSearchClick: (() -> Unit)? = null,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -136,7 +136,9 @@ fun SnapSearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    onSearchClick()
+                    if (onSearchClick != null) {
+                        onSearchClick()
+                    }
                     keyboardController?.hide()
                     focusManager.clearFocus()
                 }

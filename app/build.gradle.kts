@@ -22,6 +22,7 @@ val googleWebClientId = localProperties["GOOGLE_WEB_CLIENT_ID"] as String
 val lensGroupId = localProperties["LENS_GROUP_ID"] as String
 val snapApiToken = localProperties["SNAP_API_TOKEN"] as String
 val facebookClientToken = localProperties["FACEBOOK_CLIENT_TOKEN"] as String
+val geminiApiKey = localProperties["GEMINI_API_KEY"] as String
 
 
 android {
@@ -39,6 +40,7 @@ android {
         manifestPlaceholders["snapApiToken"] = snapApiToken
         manifestPlaceholders["facebookClientToken"] = facebookClientToken
 
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
         buildConfigField("String", "LENS_GROUP_ID", "\"$lensGroupId\"")
         buildConfigField("String", "SNAP_API_TOKEN", "\"$snapApiToken\"")
@@ -108,6 +110,11 @@ dependencies {
     implementation(libs.lenses.bundle)
     implementation(libs.support.camerax)
     implementation(libs.support.camera.layout)
+    implementation ("com.snap.camerakit:support-lenses-carousel:1.39.0")
+
+
+    //Gemini api
+    implementation(libs.generativeai)
 
     // Permissions handling
     implementation(libs.accompanist.permissions)

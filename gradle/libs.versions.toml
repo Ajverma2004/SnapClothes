@@ -9,6 +9,7 @@ dotsindicator = "5.1.0"
 facebookAndroidSdk = "latest.release"
 firebaseBom = "33.11.0"
 firebaseFirestoreKtx = "25.1.3"
+generativeai = "0.9.0"
 kotlin = "2.0.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -44,6 +45,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 camerakit = { module = "com.snap.camerakit:camerakit", version.ref = "camerakit" }
 dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+generativeai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "generativeai" }
 google-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
 facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebookAndroidSdk" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }

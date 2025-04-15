@@ -35,6 +35,7 @@ import com.ajverma.snapclothes.presentation.screens.welcome.WelcomeScreen
 import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import com.ajverma.snapclothes.presentation.screens.chatbot.ChatBotScreen
 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalAnimationApi::class)
@@ -109,6 +110,12 @@ fun SnapNavigation(
                     navController = navController,
                 )
             }
+            composable<ChatBot> {
+                onScreenChanged(true)
+                ChatBotScreen(
+                    navController = navController
+                )
+            }
 
             composable(
                 route = "$PRODUCT_LIST_BASE?category={category}&query={query}",
@@ -144,6 +151,8 @@ fun SnapNavigation(
                     productId = productId!!
                 )
             }
+
+
         }
     }
 }
@@ -156,6 +165,14 @@ fun getCustomEnterTransition(from: String?, to: String?): EnterTransition {
         // Home <-> Favourites
         from == Home::class.qualifiedName && to == Favourites::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
         from == Favourites::class.qualifiedName && to == Home::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
+
+        // Home <-> ChatBot
+        from == Home::class.qualifiedName && to == ChatBot::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
+        from == ChatBot::class.qualifiedName && to == Home::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
+
+        // Favourites <-> ChatBot
+        from == Favourites::class.qualifiedName && to == ChatBot::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
+        from == ChatBot::class.qualifiedName && to == Favourites::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
 
         // Home <-> ProductDetails
         from == Home::class.qualifiedName && to == ProductDetails::class.qualifiedName -> slideInVertically { it } + fadeIn()
@@ -197,6 +214,15 @@ fun getCustomExitTransition(from: String?, to: String?): ExitTransition {
         // Home <-> Favourites
         from == Home::class.qualifiedName && to == Favourites::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()
         from == Favourites::class.qualifiedName && to == Home::class.qualifiedName -> slideOutHorizontally { it } + fadeOut()
+
+        // Home <-> ChatBot
+        from == Home::class.qualifiedName && to == ChatBot::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()
+        from == ChatBot::class.qualifiedName && to == Home::class.qualifiedName -> slideOutHorizontally { it } + fadeOut()
+
+        // Favourites <-> ChatBot
+        from == Favourites::class.qualifiedName && to == ChatBot::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()
+        from == ChatBot::class.qualifiedName && to == Favourites::class.qualifiedName -> slideOutHorizontally { it } + fadeOut()
+
 
         // Home <-> ProductDetails
         from == Home::class.qualifiedName && to == ProductDetails::class.qualifiedName -> slideOutVertically { -it } + fadeOut()
