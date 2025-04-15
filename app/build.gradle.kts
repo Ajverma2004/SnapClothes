@@ -102,6 +102,7 @@ dependencies {
 
     //room DB
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.storage)
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -134,6 +135,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.gson)
     implementation(libs.logging.interceptor)
+
+    //lottie
+    implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

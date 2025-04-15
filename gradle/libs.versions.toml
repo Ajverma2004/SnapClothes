@@ -34,6 +34,7 @@ roomCompiler = "2.7.0-rc03"
 credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
 gmsGoogleServices = "4.4.2"
+storage = "1.5.0"
 
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
@@ -85,6 +86,7 @@ sceneview = { module = "io.github.sceneview:sceneview", version.ref = "sceneview
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 support-camera-layout = { module = "com.snap.camerakit:support-camera-layout", version.ref = "camerakit" }
 support-camerax = { module = "com.snap.camerakit:support-camerax", version.ref = "camerakit" }
+androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -9,11 +9,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,19 +24,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,7 +54,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -53,8 +67,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -63,6 +80,9 @@ import com.ajverma.snapclothes.data.network.models.ChatBotData
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapSearchBar
 import com.ajverma.snapclothes.presentation.utils.widgets.TypingAnimation
+import com.dotlottie.dlplayer.Mode
+import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -70,7 +90,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun ChatBotScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: ChatBotViewModel = hiltViewModel()
+    viewModel: ChatBotViewModel = hiltViewModel(),
 ) {
 
     var text by remember { mutableStateOf("") }
@@ -142,6 +162,12 @@ fun ChatBotScreen(
     }
 
 
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(messageList.size) {
+        listState.animateScrollToItem(0)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -162,6 +188,16 @@ fun ChatBotScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
+                    DotLottieAnimation(
+                        source = DotLottieSource.Url("https://lottie.host/9277b8bf-12df-4df8-b5ff-d8f2d5e6e526/eG8GDTheQC.lottie"),
+                        autoplay = true,
+                        loop = true,
+                        speed = 2f,
+                        useFrameInterpolation = false,
+                        playMode = Mode.FORWARD,
+                        modifier = Modifier.background(Color.Transparent)
+                    )
+
                     Text(
                         text = "👋 Hi! I'm your AI assistant",
                         style = MaterialTheme.typography.headlineMedium,
@@ -182,100 +218,77 @@ fun ChatBotScreen(
                         .fillMaxSize()
                         .padding(vertical = 8.dp),
                     reverseLayout = true,
+                    state = listState,
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     items(
                         items = messageList.reversed(),
-                    ) { message ->
+                    ) {
                         this@Column.AnimatedVisibility(
                             visible = true,
                             enter = fadeIn() + slideInVertically(),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            MessageRow(message = message)
+                            MessageRow(message = it)
                         }
                     }
                 }
             }
         }
 
-        // Input Field
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 2.dp,
-            shadowElevation = 2.dp
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SnapSearchBar(
-                    isSearchActive = isSearchActive,
-                    searchText = text,
-                    onSearchTextChange = { text = it },
-                    onBackClick = {
-
-                    },
+            Box(modifier = Modifier.weight(1f)) {
+                ChatInputField(
+                    text = text,
+                    onTextChange = { text = it },
                     focusRequester = searchFocusRequester,
-                    onSearchTriggered = { isSearchActive = true },
-                    onFocusChanged = { isSearchFocused = it },
-                    showBackButton = false,
-//                    onSearchClick = {
-//                        navController.navigate(productListRoute(query = searchText))
-//                        searchText = ""
-//                        isSearchActive = false
-//                        focusManager.clearFocus()
-//                        keyboardController?.hide()
-//                    }
+                    onFocusChanged = { isSearchFocused = it }
                 )
+            }
 
+            Spacer(modifier = Modifier.width(8.dp))
 
-                IconButton(
-                    onClick = {
-                        viewModel.onSendClicked(text)
-                        text = ""
-                    },
-                    enabled = text.isNotBlank()
+            IconButton(
+                onClick = {
+                    viewModel.onSendClicked(text)
+                    text = ""
+                    isSearchActive = false
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                },
+                enabled = text.isNotBlank(),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.Black,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = Color.Black.copy(alpha = 0.3f)
+                )
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ){
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Send message",
-                        tint = MaterialTheme.colorScheme.primary
+                        contentDescription = "Send message"
                     )
                 }
             }
+
         }
-    }
-}
 
-@Composable
-fun MessageList(
-    modifier: Modifier = Modifier,
-    messageList: List<ChatBotData>
-) {
-
-    if (messageList.isEmpty()){
-
-    }
-    else {
-        LazyColumn(
-            modifier = modifier,
-            reverseLayout = true
-        ) {
-            items(messageList.reversed()){ messageList ->
-                MessageRow(message = messageList)
-            }
-        }
     }
 }
 
 @Composable
 fun MessageRow(
     modifier: Modifier = Modifier,
-    message: ChatBotData
+    message: ChatBotData,
 ) {
     val clipboardManager = LocalClipboardManager.current
     var showCopyButton by remember { mutableStateOf(false) }
@@ -290,8 +303,8 @@ fun MessageRow(
         Surface(
             modifier = Modifier.widthIn(0.dp, 340.dp),
             color = when (message.role) {
-                "user" -> Color(0xFFD1E8FF)
-                else -> Color(0xFFF1F3F4)
+                "user" -> MaterialTheme.colorScheme.primary
+                else -> Color.Transparent
             },
             shape = RoundedCornerShape(
                 topStart = 12.dp,
@@ -309,7 +322,7 @@ fun MessageRow(
                     contentAlignment = Alignment.Center
                 ) {
                     TypingAnimation(
-                        circleColor = MaterialTheme.colorScheme.primary,
+                        circleColor = Color.Black,
                         circleSize = 6f,
                         travelDistance = 6f
                     )
@@ -330,7 +343,7 @@ fun MessageRow(
                         text = message.message,
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f),
-                        color = if (isUserMessage) Color(0xFF00344F) else Color(0xFF333333)
+                        color = Color.Black
                     )
 
                     AnimatedVisibility(
@@ -356,4 +369,52 @@ fun MessageRow(
             }
         }
     }
+}
+
+
+
+
+@Composable
+fun ChatInputField(
+    text: String,
+    onTextChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    onFocusChanged: (Boolean) -> Unit
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    TextField(
+        value = text,
+        onValueChange = onTextChange,
+        placeholder = {
+            Text(
+                text = "Type a message...",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        },
+        singleLine = true,
+        textStyle = TextStyle(fontSize = 14.sp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester)
+            .onFocusChanged {
+                onFocusChanged(it.isFocused)
+            }
+            .height(48.dp)
+            .shadow(4.dp, RoundedCornerShape(20.dp))
+            .border(1.dp, Color.Black, RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color.White),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            cursorColor = Color.Black
+        ),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default)
+    )
 }
