@@ -247,7 +247,6 @@ fun ChatBotScreen(
     }
 }
 
-// --- Extracted Composables ---
 
 @Composable
 fun EmptyState(modifier: Modifier = Modifier) {
@@ -261,14 +260,13 @@ fun EmptyState(modifier: Modifier = Modifier) {
     ) {
         DotLottieAnimation(
             source = DotLottieSource.Url("https://lottie.host/9277b8bf-12df-4df8-b5ff-d8f2d5e6e526/eG8GDTheQC.lottie"),
-            autoplay = false,
+            autoplay = true,
             loop = true,
             speed = 1.5f,
             useFrameInterpolation = true,
             playMode = Mode.FORWARD,
             modifier = Modifier
                 .size(200.dp)
-                .padding(bottom = 16.dp)
         )
 
         Text(

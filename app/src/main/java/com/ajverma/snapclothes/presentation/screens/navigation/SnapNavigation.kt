@@ -110,12 +110,6 @@ fun SnapNavigation(
                     navController = navController,
                 )
             }
-            composable<ChatBot> {
-                onScreenChanged(true)
-                ChatBotScreen(
-                    navController = navController
-                )
-            }
 
             composable(
                 route = "$PRODUCT_LIST_BASE?category={category}&query={query}",

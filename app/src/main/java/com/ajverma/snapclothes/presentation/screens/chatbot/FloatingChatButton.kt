@@ -25,6 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.dotlottie.dlplayer.Mode
+import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.sin
@@ -34,27 +37,16 @@ fun FloatingChatButton(
     onChatButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var offsetY by remember { mutableStateOf(0f) }
-    val interactionSource = remember { MutableInteractionSource() }
     val scope = rememberCoroutineScope()
     val animatedOffset = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(3000) // Move every 3 seconds
+            delay(5000)
             scope.launch {
-                animatedOffset.animateTo(
-                    targetValue = 5f, // Move down by 5 dp
-                    animationSpec = tween(durationMillis = 500)
-                )
-                animatedOffset.animateTo(
-                    targetValue = -5f, // Move up by 10 dp
-                    animationSpec = tween(durationMillis = 500)
-                )
-                animatedOffset.animateTo(
-                    targetValue = 0f, // Return to original position
-                    animationSpec = tween(durationMillis = 500)
-                )
+                animatedOffset.animateTo(5f, tween(500))
+                animatedOffset.animateTo(-5f, tween(500))
+                animatedOffset.animateTo(0f, tween(500))
             }
         }
     }
@@ -62,19 +54,22 @@ fun FloatingChatButton(
     Box(
         modifier = modifier
             .padding(16.dp)
-            .size(56.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape)
-            .clickable(interactionSource = interactionSource, indication = null) { // No ripple
-                onChatButtonClicked()
-            }
-            .padding(16.dp)
-            .offset(y = animatedOffset.value.dp), // Apply vertical offset
+            .size(66.dp)
+            .offset(y = animatedOffset.value.dp)
+            .background(color = Color.Black, shape = CircleShape)
+            .clickable { onChatButtonClicked() },
         contentAlignment = Alignment.Center
     ) {
-        Icon(
-            imageVector = Icons.Filled.Person,
-            contentDescription = "Open Chatbot",
-            tint = Color.White
+        DotLottieAnimation(
+            source = DotLottieSource.Url("https://lottie.host/f57f4114-5e3c-4586-89cc-30a46ab44e97/uVNehFXXfW.lottie"),
+            autoplay = true,
+            loop = true,
+            speed = 2f,
+            useFrameInterpolation = false,
+            playMode = Mode.FORWARD,
+            modifier = Modifier
+                .size(56.dp)
         )
     }
 }
+

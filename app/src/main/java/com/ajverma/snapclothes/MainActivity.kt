@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -66,6 +67,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
+import com.ajverma.snapclothes.presentation.screens.chatbot.FloatingChatButton
+import com.ajverma.snapclothes.presentation.screens.chatbot.PopoutChatbot
 import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
 import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
@@ -74,6 +77,7 @@ import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
 import com.ajverma.snapclothes.presentation.screens.navigation.Login
 import com.ajverma.snapclothes.presentation.screens.navigation.NavRoutes
+import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
 import com.ajverma.snapclothes.presentation.screens.navigation.SignUp
 import com.ajverma.snapclothes.presentation.screens.navigation.SnapNavigation
@@ -125,10 +129,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             SnapClothesTheme {
 
+
+
                 val navItems = listOf(
                     BottomNavItems.Home,
                     BottomNavItems.Favourites,
-                    BottomNavItems.ChatBot
                 )
 
                 val bottomNavRoutes = listOf(Home, Favourites)
@@ -148,6 +153,27 @@ class MainActivity : ComponentActivity() {
                 val searchFocusRequester = remember { FocusRequester() }
 
 
+                // State to control the visibility of the pop-out chatbot
+                var isChatbotVisible by remember { mutableStateOf(false) }
+
+                val destination = navController.currentBackStackEntryAsState().value?.destination
+                val fabPosition = remember(destination) {
+                    if (destination?.route?.startsWith("productDetails") == true) {
+                        FabPosition.Start
+                    } else {
+                        FabPosition.End
+                    }
+                }
+
+
+                // List of authentication screen routes where the FAB should not be shown
+                val authRoutes = listOf(
+                    Login::class.qualifiedName,
+                    AuthOption::class.qualifiedName,
+                    Welcome::class.qualifiedName,
+                    SignUp::class.qualifiedName
+                )
+
                 val shouldShowBackButton = when (currentRoute) {
                     Home::class.qualifiedName -> isSearchFocused
                     Favourites::class.qualifiedName -> false
@@ -162,6 +188,7 @@ class MainActivity : ComponentActivity() {
                     SignUp::class.qualifiedName,
                     ChatBot::class.qualifiedName
                 )
+
 
 
                 LaunchedEffect(currentRoute) {
@@ -292,6 +319,12 @@ class MainActivity : ComponentActivity() {
                             }
 
                         }
+                    },
+                    floatingActionButtonPosition = fabPosition,
+                    floatingActionButton = {
+                        if (currentRoute !in authRoutes) {
+                            FloatingChatButton(onChatButtonClicked = { isChatbotVisible = !isChatbotVisible })
+                        }
                     }
                 ) { innerPadding ->
                     Box(
@@ -299,6 +332,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .background(Color.White)
                             .padding(innerPadding),
+                        contentAlignment = Alignment.BottomEnd
                     ) {
                         SnapNavigation(
                             navController = navController,
@@ -316,6 +350,14 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         )
+                        // Show the pop-out chatbot when isChatbotVisible is true
+                        if (isChatbotVisible) {
+                            PopoutChatbot(
+                                isVisible = isChatbotVisible,
+                                onDismiss = { isChatbotVisible = false },
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }
@@ -332,11 +374,6 @@ class MainActivity : ComponentActivity() {
         data object Favourites : BottomNavItems(
             com.ajverma.snapclothes.presentation.screens.navigation.Favourites,
             Icons.Filled.Favorite
-        )
-
-        data object ChatBot : BottomNavItems(
-            com.ajverma.snapclothes.presentation.screens.navigation.ChatBot,
-            Icons.Filled.Person
         )
     }
 
