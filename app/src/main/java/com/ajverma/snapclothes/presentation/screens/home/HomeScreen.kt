@@ -225,41 +225,10 @@ fun HomeScreen(
                             viewModel.onProductClicked(it)
                         },
                     )
-
-                    item {
-                        LogOutButton(navController)
-                    }
-
                 }
             }
         }
     }
-}
-
-@Composable
-fun LogOutButton(
-    navController: NavController,
-) {
-    Text(
-        text = "LOG OUT",
-        style = MaterialTheme.typography.labelSmall,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                FirebaseAuth.getInstance().signOut()
-                navController.navigate(Welcome){
-                    popUpTo(0){
-                        inclusive = true
-                    }
-                }
-            }
-            .padding(top = 30.dp, bottom = 7.dp),
-        textAlign = TextAlign.Center,
-        color = Color(0xFFFFBD00),
-    )
 }
 
 fun productListRoute(

@@ -9,6 +9,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -94,7 +96,9 @@ import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.util.jar.Attributes.Name
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -303,10 +307,26 @@ fun SharedTransitionScope.ProductDetailsScreen(
 
 
         if (!lensId.isNullOrBlank() && !isTryButtonVisible) {
+            val scope = rememberCoroutineScope()
+            val animatedOffset = remember { Animatable(0f) }
+
+            LaunchedEffect(Unit) {
+                while (true) {
+                    delay(4000)
+                    scope.launch {
+                        animatedOffset.animateTo(5f, tween(100))
+                        animatedOffset.animateTo(-5f, tween(100))
+                        animatedOffset.animateTo(5f, tween(100))
+                        animatedOffset.animateTo(-5f, tween(100))
+                        animatedOffset.animateTo(0f, tween(100))
+                    }
+                }
+            }
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(start = 16.dp, bottom = 110.dp, end = 16.dp, top = 16.dp)
+                    .offset(x = animatedOffset.value.dp)
             ) {
                 if (!lensId.isNullOrBlank()) {
                     FloatingTryARButton(lensId = lensId)
@@ -445,6 +465,8 @@ fun FloatingTryARButton(
     lensId: String
 ) {
     val context = LocalContext.current
+
+
     Box(
         modifier = Modifier
             .size(70.dp)
@@ -453,6 +475,7 @@ fun FloatingTryARButton(
             .clickable {
                 startCamera(lensId, context)
             }
+
     ) {
         // Background image
         Image(

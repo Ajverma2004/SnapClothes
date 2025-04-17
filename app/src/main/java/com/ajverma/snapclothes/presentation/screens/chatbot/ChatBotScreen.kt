@@ -280,7 +280,8 @@ fun EmptyState(modifier: Modifier = Modifier) {
             text = "How can I help you today?",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f) // Slightly muted text
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            modifier = Modifier.padding(bottom = 20.dp) // Slightly muted text
         )
     }
 }

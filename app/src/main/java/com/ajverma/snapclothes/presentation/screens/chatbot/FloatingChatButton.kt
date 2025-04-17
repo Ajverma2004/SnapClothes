@@ -24,6 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
@@ -50,6 +52,7 @@ fun FloatingChatButton(
             }
         }
     }
+    val haptic = LocalHapticFeedback.current
 
     Box(
         modifier = modifier
@@ -57,7 +60,13 @@ fun FloatingChatButton(
             .size(66.dp)
             .offset(y = animatedOffset.value.dp)
             .background(color = Color.Black, shape = CircleShape)
-            .clickable { onChatButtonClicked() },
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onChatButtonClicked()
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+              },
         contentAlignment = Alignment.Center
     ) {
         DotLottieAnimation(
