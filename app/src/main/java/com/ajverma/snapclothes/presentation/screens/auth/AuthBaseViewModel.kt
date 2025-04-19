@@ -39,15 +39,15 @@ abstract class AuthBaseViewModel(
         return googleAuthClient.isSignedIn()
     }
 
-    fun onGoogleClick(){
-        initiateGoogleLogin()
+    fun onGoogleClick(activity: ComponentActivity){
+        initiateGoogleLogin(activity)
     }
 
-    private fun initiateGoogleLogin() {
+    private fun initiateGoogleLogin(activity: ComponentActivity) {
         viewModelScope.launch {
             loading()
             try {
-                val result = googleAuthClient.signInWithGoogle()
+                val result = googleAuthClient.signInWithGoogle(activity)
                 when (result) {
                     is SignInResult.Success -> {
                         Log.d("GoogleAuthClient", "Sign in successful")

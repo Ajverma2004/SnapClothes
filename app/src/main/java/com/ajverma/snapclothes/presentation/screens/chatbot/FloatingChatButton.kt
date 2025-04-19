@@ -23,10 +23,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.ajverma.snapclothes.R
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
 import com.lottiefiles.dotlottie.core.util.DotLottieSource
@@ -59,7 +62,11 @@ fun FloatingChatButton(
             .padding(16.dp)
             .size(66.dp)
             .offset(y = animatedOffset.value.dp)
-            .background(color = Color.Black, shape = CircleShape)
+            .shadow(
+                elevation = 8.dp,
+                shape = CircleShape
+            )
+            .background(color = Color.White, shape = CircleShape)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -69,15 +76,13 @@ fun FloatingChatButton(
               },
         contentAlignment = Alignment.Center
     ) {
-        DotLottieAnimation(
-            source = DotLottieSource.Url("https://lottie.host/f57f4114-5e3c-4586-89cc-30a46ab44e97/uVNehFXXfW.lottie"),
-            autoplay = true,
-            loop = true,
-            speed = 2f,
-            useFrameInterpolation = false,
-            playMode = Mode.FORWARD,
+        Icon(
+            painter = painterResource(R.drawable.ai_chatbot),
+            contentDescription = "Chat",
+            tint = Color.Black,
             modifier = Modifier
-                .size(56.dp)
+                .matchParentSize()
+                .padding(8.dp)
         )
     }
 }

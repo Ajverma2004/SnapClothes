@@ -2,6 +2,7 @@ package com.ajverma.snapclothes.data.network.auth
 
 import android.content.Context
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -36,13 +37,13 @@ class GoogleAuthClient @Inject constructor(
         return false
     }
 
-    suspend fun signInWithGoogle(): SignInResult {
+    suspend fun signInWithGoogle(activity: ComponentActivity): SignInResult {
         if (isSignedIn()) {
             return SignInResult.Success
         }
 
         return try {
-            val result = buildCredentialRequest()
+            val result = buildCredentialRequest(activity)
             val credential = result.credential
 
             if (
@@ -68,7 +69,7 @@ class GoogleAuthClient @Inject constructor(
         }
     }
 
-    private suspend fun buildCredentialRequest(): GetCredentialResponse {
+    private suspend fun buildCredentialRequest(activity: ComponentActivity): GetCredentialResponse {
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(
                 GetGoogleIdOption.Builder()
@@ -76,13 +77,13 @@ class GoogleAuthClient @Inject constructor(
                     .setServerClientId(
                         BuildConfig.GOOGLE_WEB_CLIENT_ID
                     )
-                    .setAutoSelectEnabled(false)
+                    .setAutoSelectEnabled(true)
                     .build()
             )
             .build()
 
         return credentialManager.getCredential(
-            request = request, context = context
+            request = request, context = activity
         )
     }
 

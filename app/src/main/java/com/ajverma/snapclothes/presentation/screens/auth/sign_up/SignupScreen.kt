@@ -255,38 +255,18 @@ fun SignupScreen(
                     )
 
 
-                    // google and facebook buttons
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        //google button
-                        SignInOptionButton(
-                            onClick = {
-                                viewModel.onGoogleClick()
-                            },
-                            image = R.drawable.ic_google,
-                            text = R.string.google,
-                            elevation = 10.dp
-                        )
+                    // google button
+                    SignInOptionButton(
+                        onClick = {
+                            viewModel.onGoogleClick(context as ComponentActivity)
+                        },
+                        image = R.drawable.ic_google,
+                        text = R.string.google,
+                        elevation = 10.dp,
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    )
 
-                        //facebook button
-                        SignInOptionButton(
-                            onClick = {
-                                viewModel.onFacebookClick(context as ComponentActivity)
-                            },
-                            image = R.drawable.ic_facebook,
-                            text = R.string.facebook,
-                            elevation = 10.dp
-                        )
-
-
-                    }
-
-                    Spacer(Modifier.height(26.dp))
+                    Spacer(Modifier.height(20.dp))
 
                     // already have an account text
                     AlreadyHaveAnAccountText(

@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -69,6 +70,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -82,6 +84,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
+import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.data.network.models.ChatBotData
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
@@ -258,15 +261,10 @@ fun EmptyState(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        DotLottieAnimation(
-            source = DotLottieSource.Url("https://lottie.host/9277b8bf-12df-4df8-b5ff-d8f2d5e6e526/eG8GDTheQC.lottie"),
-            autoplay = true,
-            loop = true,
-            speed = 1.5f,
-            useFrameInterpolation = true,
-            playMode = Mode.FORWARD,
-            modifier = Modifier
-                .size(200.dp)
+        Image(
+            painter = painterResource(R.drawable.ai_chatbot_2),
+            contentDescription = "AI Chatbot",
+            modifier = Modifier.size(200.dp)
         )
 
         Text(

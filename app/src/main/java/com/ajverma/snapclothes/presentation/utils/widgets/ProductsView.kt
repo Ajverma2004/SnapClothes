@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -44,13 +46,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.ajverma.jetfoodapp.presentation.utils.widgets.gridItems
+import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.database.FavouriteProduct
 import com.ajverma.snapclothes.presentation.screens.favourite.FavouriteViewModel
+import com.dotlottie.dlplayer.Mode
+import com.lottiefiles.dotlottie.core.compose.ui.DotLottieAnimation
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
@@ -101,6 +108,7 @@ fun ProductItem(
             .background(Color.White)
             .clickable { onProductClick(product._id) }
     ) {
+
         Column(modifier = Modifier.padding(8.dp)) {
             ImagePager(images = product.image_urls)
 
@@ -145,6 +153,32 @@ fun ProductItem(
                         }
                     }
                 }
+            }
+        }
+
+        if (!product.lensID.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp, end = 8.dp)
+                    .size(48.dp)
+                    .shadow(elevation = 6.dp, shape = CircleShape)
+                    .clip(CircleShape)
+                    .background(Color(0xFFB19ADC))
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary,
+                        CircleShape
+                    )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ar_cube),
+                    contentDescription = "AR",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(32.dp),
+                    tint = Color(0xffffef00)
+                )
             }
         }
 

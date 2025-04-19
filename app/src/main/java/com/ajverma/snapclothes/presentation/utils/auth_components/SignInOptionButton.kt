@@ -30,7 +30,8 @@ fun SignInOptionButton(
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = elevation,
 
-        )
+        ),
+        modifier = modifier
     ) {
         Image(
             painter = painterResource(image),
