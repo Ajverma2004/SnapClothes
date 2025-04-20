@@ -64,27 +64,11 @@ fun ARHomeHeader(modifier: Modifier = Modifier) {
 
     val infiniteTransition = rememberInfiniteTransition(label = "Color Animation")
 
-//    val buttonContainerColor by infiniteTransition.animateColor(
-//        initialValue = Color.White,
-//        targetValue = Color.Black,
-//        animationSpec = infiniteRepeatable(
-//            animation = tween(2000, easing = LinearEasing),
-//            repeatMode = RepeatMode.Reverse
-//        ),
-//        label = "Button Background Color"
-//    )
-//
-//    val buttonTextColor by infiniteTransition.animateColor(
-//        initialValue = Color.Black,
-//        targetValue = Color.White,
-//        animationSpec = infiniteRepeatable(
-//            animation = tween(2000, easing = LinearEasing),
-//            repeatMode = RepeatMode.Reverse
-//        ),
-//        label = "Button Text Color"
-//    )
 // Toggle state
     var isDark by remember { mutableStateOf(false) }
+    // Direct color change (no animation)
+    val buttonContainerColor = if (isDark) Color.Black else Color.White
+    val buttonTextColor = if (isDark) Color.White else Color.Black
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -93,9 +77,25 @@ fun ARHomeHeader(modifier: Modifier = Modifier) {
         }
     }
 
-// Direct color change (no animation)
-    val buttonContainerColor = if (isDark) Color.Black else Color.White
-    val buttonTextColor = if (isDark) Color.White else Color.Black
+    val offsetX by infiniteTransition.animateFloat(
+        initialValue = -4f,
+        targetValue = 4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "X sway"
+    )
+
+    val offsetY by infiniteTransition.animateFloat(
+        initialValue = -2f,
+        targetValue = 2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "Y sway"
+    )
 
     // Image change state with slower animation
     var currentImage by remember { mutableStateOf(R.drawable.tshirt_on_hanger) }
@@ -177,27 +177,6 @@ fun ARHomeHeader(modifier: Modifier = Modifier) {
                 Text("CAMERA TRY-ON", fontSize = 16.sp)
             }
 
-            val infiniteTransition = rememberInfiniteTransition(label = "iPhoneSway")
-
-            val offsetX by infiniteTransition.animateFloat(
-                initialValue = -4f,
-                targetValue = 4f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(4000, easing = FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "X sway"
-            )
-
-            val offsetY by infiniteTransition.animateFloat(
-                initialValue = -2f,
-                targetValue = 2f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(4000, easing = LinearOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "Y sway"
-            )
 
             Image(
                     painter = painterResource(id = currentImage),
