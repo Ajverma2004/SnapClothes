@@ -139,6 +139,9 @@ dependencies {
     //lottie
     implementation("com.github.LottieFiles:dotlottie-android:0.5.0")
 
+    //contraint layout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

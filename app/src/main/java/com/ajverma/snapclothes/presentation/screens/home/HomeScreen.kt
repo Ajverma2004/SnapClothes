@@ -49,6 +49,7 @@ import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
 import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
 import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListViewModel
+import com.ajverma.snapclothes.presentation.utils.widgets.ARHomeHeader
 import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapBanner
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapCategories
@@ -136,15 +137,8 @@ fun HomeScreen(
 
                 is HomeViewModel.HomeState.Success -> {
 
-                    item { Spacer(modifier = Modifier.height(20.dp)) }
-
                     item {
-                        SnapBanner(
-                            bannerList = bannersList.value,
-                            onBannerClick = {
-                                viewModel.onCategoryClicked(it)
-                            }
-                        )
+                        ARHomeHeader()
                     }
 
                     item { Spacer(modifier = Modifier.height(20.dp)) }
