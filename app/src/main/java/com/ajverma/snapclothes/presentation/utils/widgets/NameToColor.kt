@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.ajverma.snapclothes.presentation.utils.mapper.colorExtractor
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -93,30 +94,6 @@ fun NameToColor(
 }
 
 
-@Composable
-fun String.colorExtractor(
-    modifier: Modifier = Modifier,
-): Color {
-    return when (this) {
-        "Black" -> Color(0xFF000000)
-        "Army Green" -> Color(0xFF4B5320)
-        "Brown" -> Color(0xFF8B4513)
-        "Khaki" -> Color(0xFFF0E68C)
-        "White" -> Color(0xFFFFFFFF)
-        "Navy Blue" -> Color(0xFF000080)
-        "Dark Grey" -> Color(0xFFA9A9A9)
-        "Dark Pink" -> Color(0xFFFF1493)
-        "Rose Red" -> Color(0xFFC21E56)
-        "Dark Green" -> Color(0xFF006400)
-        "Orange-red" -> Color(0xFFFF4500)
-        "Royal Blue" -> Color(0xFF4169E1)
-        "Dark Red" -> Color(0xFF8B0000)
-        "Peacock Blue" -> Color(0xFF1C39BB)
-        "Light Green" -> Color(0xFF90EE90)
-        "Rose Purple" -> Color(0xFFB03060)
-        else -> Color.Black
-    }
-}
 
 
 @Preview(showBackground = true)
