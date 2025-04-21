@@ -3,14 +3,17 @@ package com.ajverma.snapclothes.presentation.screens.snap_carousal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ajverma.snapclothes.data.network.models.LensData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LensViewModel : ViewModel() {
+@HiltViewModel
+class LensViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(LensUiState())
     val uiState: StateFlow<LensUiState> = _uiState.asStateFlow()
@@ -19,16 +22,10 @@ class LensViewModel : ViewModel() {
     private suspend fun fetchLensesFromRepository(): List<LensData> {
         delay(500)
         return listOf(
-            LensData("id_1", "Dog Ears", "https://picsum.photos/id/10/200"),
-            LensData("id_2", "Hearts", "https://picsum.photos/id/20/200"),
-            LensData("id_3", "Glasses", "https://picsum.photos/id/30/200"),
-            LensData("id_4", "Clown Nose", "https://picsum.photos/id/40/200"),
-            LensData("id_5", "Flower Crown", "https://picsum.photos/id/50/200"),
-            LensData("id_6", "No Filter", "https://picsum.photos/id/60/200"),
-            LensData("id_7", "Vintage", "https://picsum.photos/id/70/200"),
-            LensData("id_8", "Sparkles", "https://picsum.photos/id/80/200"),
-            LensData("id_9", "Big Eyes", "https://picsum.photos/id/90/200"),
-            LensData("id_10", "Rainbow", "https://picsum.photos/id/100/200")
+            LensData("d1218e18-2e0c-4366-abc9-2245e3a270a9", "Dog Ears", "https://picsum.photos/id/10/200"),
+            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "Hearts", "https://picsum.photos/id/20/200"),
+            LensData("1a2dd1a4-ae08-42bb-b6ab-7ef35f349bdd", "No Filter", "https://picsum.photos/id/60/200"),
+            LensData("9faa4c06-3a15-48f4-ac60-2d3ae0423fab", "Rainbow", "https://picsum.photos/id/100/200")
         )
     }
     // --- End Simulation ---
@@ -70,6 +67,21 @@ class LensViewModel : ViewModel() {
             }
         }
     }
+
+    fun appendLensesFromGroup(newLenses: List<LensData>) {
+        _uiState.update { current ->
+            val combined = (current.lenses + newLenses).distinctBy { it.id } // avoid duplicates
+            val initialIndex = if (combined.isNotEmpty()) combined.size / 2 else -1
+
+            current.copy(
+                lenses = combined,
+                isLoading = false,
+                selectedLensIndex = if (current.selectedLensIndex == -1) initialIndex else current.selectedLensIndex,
+                currentlyAppliedLensId = if (current.currentlyAppliedLensId == null && initialIndex != -1) combined[initialIndex].id else current.currentlyAppliedLensId
+            )
+        }
+    }
+
 }
 
 data class LensUiState(

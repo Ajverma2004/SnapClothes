@@ -36,6 +36,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import com.ajverma.snapclothes.presentation.screens.chatbot.ChatBotScreen
+import com.ajverma.snapclothes.presentation.screens.snap_carousal.LensCarouselScreen
 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalAnimationApi::class)
@@ -111,6 +112,13 @@ fun SnapNavigation(
                 )
             }
 
+            composable<Carousal>{
+                onScreenChanged(true)
+                LensCarouselScreen(
+                    navController = navController
+                )
+            }
+
             composable(
                 route = "$PRODUCT_LIST_BASE?category={category}&query={query}",
                 arguments = listOf(
@@ -160,6 +168,14 @@ fun getCustomEnterTransition(from: String?, to: String?): EnterTransition {
         from == Home::class.qualifiedName && to == Favourites::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
         from == Favourites::class.qualifiedName && to == Home::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
 
+        // Home <-> Carousal
+        from == Home::class.qualifiedName && to == Carousal::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
+        from == Carousal::class.qualifiedName && to == Home::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
+
+        // Home <-> Favourite
+        from == Carousal::class.qualifiedName && to == Favourites::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
+        from == Favourites::class.qualifiedName && to == Carousal::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
+
         // Home <-> ChatBot
         from == Home::class.qualifiedName && to == ChatBot::class.qualifiedName -> slideInHorizontally { it } + fadeIn()
         from == ChatBot::class.qualifiedName && to == Home::class.qualifiedName -> slideInHorizontally { -it } + fadeIn()
@@ -208,6 +224,14 @@ fun getCustomExitTransition(from: String?, to: String?): ExitTransition {
         // Home <-> Favourites
         from == Home::class.qualifiedName && to == Favourites::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()
         from == Favourites::class.qualifiedName && to == Home::class.qualifiedName -> slideOutHorizontally { it } + fadeOut()
+
+        // Home <-> Carousal
+        from == Home::class.qualifiedName && to == Carousal::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()
+        from == Carousal::class.qualifiedName && to == Home::class.qualifiedName -> slideOutHorizontally { it } + fadeOut()
+
+        // Carousal <-> Favourite
+        from == Carousal::class.qualifiedName && to == Favourites::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()
+        from == Favourites::class.qualifiedName && to == Carousal::class.qualifiedName -> slideOutHorizontally { it } + fadeOut()
 
         // Home <-> ChatBot
         from == Home::class.qualifiedName && to == ChatBot::class.qualifiedName -> slideOutHorizontally { -it } + fadeOut()

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu // Import Menu icon
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -65,6 +66,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -79,6 +81,7 @@ import com.ajverma.snapclothes.presentation.screens.chatbot.PopoutChatbot
 import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
 import com.ajverma.snapclothes.presentation.screens.home.productListRoute
 import com.ajverma.snapclothes.presentation.screens.navigation.AuthOption
+import com.ajverma.snapclothes.presentation.screens.navigation.Carousal
 import com.ajverma.snapclothes.presentation.screens.navigation.ChatBot
 import com.ajverma.snapclothes.presentation.screens.navigation.Favourites
 import com.ajverma.snapclothes.presentation.screens.navigation.Home
@@ -138,7 +141,8 @@ class MainActivity : ComponentActivity() {
             SnapClothesTheme {
                 val navItems = listOf(
                     BottomNavItems.Home,
-                    BottomNavItems.Favourites,
+                    BottomNavItems.Carousal,
+                    BottomNavItems.Favourites
                 )
 
                 val bottomNavRoutes = listOf(Home, Favourites)
@@ -171,7 +175,8 @@ class MainActivity : ComponentActivity() {
                     AuthOption::class.qualifiedName,
                     Welcome::class.qualifiedName,
                     SignUp::class.qualifiedName,
-                    "com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails/{productId}"
+                    "com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails/{productId}",
+                    Carousal::class.qualifiedName
                 )
 
                 val shouldShowBackButton = when (currentRoute) {
@@ -186,7 +191,8 @@ class MainActivity : ComponentActivity() {
                     AuthOption::class.qualifiedName,
                     Welcome::class.qualifiedName,
                     SignUp::class.qualifiedName,
-                    ChatBot::class.qualifiedName
+                    ChatBot::class.qualifiedName,
+                    Carousal::class.qualifiedName
                 )
 
                 LaunchedEffect(currentRoute) {
@@ -423,6 +429,11 @@ class MainActivity : ComponentActivity() {
         data object Favourites : BottomNavItems(
             com.ajverma.snapclothes.presentation.screens.navigation.Favourites,
             Icons.Filled.Favorite
+        )
+
+        data object Carousal : BottomNavItems(
+            com.ajverma.snapclothes.presentation.screens.navigation.Carousal,
+            Icons.TwoTone.PlayArrow
         )
     }
 }
