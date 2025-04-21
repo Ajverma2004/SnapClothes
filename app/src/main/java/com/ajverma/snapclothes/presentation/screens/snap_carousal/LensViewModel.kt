@@ -22,10 +22,10 @@ class LensViewModel @Inject constructor() : ViewModel() {
     private suspend fun fetchLensesFromRepository(): List<LensData> {
         delay(500)
         return listOf(
-            LensData("d1218e18-2e0c-4366-abc9-2245e3a270a9", "Dog Ears", "https://picsum.photos/id/10/200"),
-            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "Hearts", "https://picsum.photos/id/20/200"),
-            LensData("1a2dd1a4-ae08-42bb-b6ab-7ef35f349bdd", "No Filter", "https://picsum.photos/id/60/200"),
-            LensData("9faa4c06-3a15-48f4-ac60-2d3ae0423fab", "Rainbow", "https://picsum.photos/id/100/200")
+            LensData("d1218e18-2e0c-4366-abc9-2245e3a270a9", "Puffer Jacket", "https://picsum.photos/id/10/200", "6805797ae1032701b069f8c9"),
+            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "Superman T-Shirt", "https://picsum.photos/id/20/200", "67e0a260b659996e8d23c4e6"),
+            LensData("1a2dd1a4-ae08-42bb-b6ab-7ef35f349bdd", "Orange and green dress", "https://picsum.photos/id/60/200", "67f293897f606ef770c60f91"),
+            LensData("9faa4c06-3a15-48f4-ac60-2d3ae0423fab", "Sunglasses", "https://picsum.photos/id/100/200", "67e0a91f359e76df43197166")
         )
     }
     // --- End Simulation ---

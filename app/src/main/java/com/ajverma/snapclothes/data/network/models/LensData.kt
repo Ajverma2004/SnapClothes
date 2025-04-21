@@ -3,5 +3,6 @@ package com.ajverma.snapclothes.data.network.models
 data class LensData(
     val id: String,
     val name: String,
-    val iconUrl: String
+    val iconUrl: String,
+    val productId: String
 )

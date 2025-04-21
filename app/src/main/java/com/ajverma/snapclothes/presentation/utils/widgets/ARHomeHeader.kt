@@ -59,7 +59,11 @@ val CurvedBottomShape = object : Shape {
 }
 
 @Composable
-fun ARHomeHeader(modifier: Modifier = Modifier) {
+fun ARHomeHeader(
+    modifier: Modifier = Modifier,
+    onLivePreviewClick: () -> Unit = {},
+    onCameraTryOnClick: () -> Unit = {}
+) {
     var livePreviewClicked by remember { mutableStateOf(false) }
 
     val infiniteTransition = rememberInfiniteTransition(label = "Color Animation")
@@ -137,7 +141,7 @@ fun ARHomeHeader(modifier: Modifier = Modifier) {
 
             // LIVE PREVIEW button
             Button(
-                onClick = {},
+                onClick = onLivePreviewClick,
                 modifier = Modifier
                     .width(180.dp)
                     .constrainAs(livePreviewButton) {
@@ -158,7 +162,7 @@ fun ARHomeHeader(modifier: Modifier = Modifier) {
 
             // CAMERA TRY-ON button
             Button(
-                onClick = {},
+                onClick = onCameraTryOnClick,
                 modifier = Modifier
                     .width(180.dp)
                     .constrainAs(cameraTryOnButton) {

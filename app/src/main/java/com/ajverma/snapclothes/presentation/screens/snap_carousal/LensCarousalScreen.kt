@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -54,6 +55,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.ajverma.snapclothes.R
 import com.ajverma.snapclothes.data.network.models.LensData
+import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
+import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -67,14 +70,14 @@ val LENS_ITEM_SPACING = 16.dp
 @Composable
 fun LensCarouselScreen(
     viewModel: LensViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
     val context = LocalContext.current
     var hasPermission by remember { mutableStateOf(false) }
+    val products = homeViewModel.products.collectAsStateWithLifecycle()
 
-    // Request permission when screen is shown
     LaunchedEffect(Unit) {
         if (!cameraPermissionState.status.isGranted) {
             cameraPermissionState.launchPermissionRequest()
@@ -83,13 +86,11 @@ fun LensCarouselScreen(
         }
     }
 
-    // React to permission changes
     LaunchedEffect(cameraPermissionState.status) {
         hasPermission = cameraPermissionState.status.isGranted
     }
 
     if (!hasPermission) {
-        // Show fallback with settings button
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -104,10 +105,8 @@ fun LensCarouselScreen(
                     modifier = Modifier.padding(16.dp),
                     textAlign = TextAlign.Center
                 )
-
                 Button(
                     onClick = {
-                        // Open app settings
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                             data = Uri.fromParts("package", context.packageName, null)
                         }
@@ -122,25 +121,19 @@ fun LensCarouselScreen(
         return
     }
 
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
     val density = LocalDensity.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val itemSizePx = with(density) { LENS_ITEM_SIZE.toPx() }
     val contentPadding = (screenWidth - LENS_ITEM_SIZE) / 2
-    val centerScrollOffsetPx = density.run { ((screenWidth - LENS_ITEM_SIZE) / 2f).toPx().toInt() }
-    val view = LocalView.current
 
-    LaunchedEffect(uiState.lenses, uiState.selectedLensIndex) {
-        if (uiState.lenses.isNotEmpty() && uiState.selectedLensIndex != -1) {
-            lazyListState.scrollToItem(uiState.selectedLensIndex, scrollOffset = 0)
-        }
-    }
+    var isFrontCamera by remember { mutableStateOf(true) }
+    var isCameraReady by remember { mutableStateOf(false) }
+
+    // ✅ Add this back — auto-select center lens while scrolling
     LaunchedEffect(lazyListState) {
-
         snapshotFlow { lazyListState.firstVisibleItemIndex to lazyListState.firstVisibleItemScrollOffset }
             .collect { (index, offset) ->
                 val itemWidthPx = with(density) { (LENS_ITEM_SIZE + LENS_ITEM_SPACING).toPx() }
@@ -150,21 +143,31 @@ fun LensCarouselScreen(
                     centerItemIndex in uiState.lenses.indices
                 ) {
                     viewModel.onLensTapped(centerItemIndex)
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress) // ✅ Add haptic here
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
             }
     }
 
-
-
-    var isFrontCamera by remember { mutableStateOf(true) }
-
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)) {
 
         CameraKitPreview(
             selectedLensId = uiState.currentlyAppliedLensId,
-            isFrontCamera = isFrontCamera
+            isFrontCamera = isFrontCamera,
+            onCameraReady = { isCameraReady = true }
         )
+
+        if (!isCameraReady) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.White)
+            }
+        }
 
         IconButton(
             onClick = { isFrontCamera = !isFrontCamera },
@@ -186,20 +189,31 @@ fun LensCarouselScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 30.dp)
         ) {
-            // Lens Name Display
+
+            val currentLens = uiState.lenses.getOrNull(uiState.selectedLensIndex)
+            val matchedProduct = products.value.find { it.lensID == currentLens?.id }
+
             Text(
-                text = uiState.lenses.getOrNull(uiState.selectedLensIndex)?.name ?: "",
+                text = "BUY",
                 color = Color.White,
                 fontSize = 16.sp,
+                style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
+                fontWeight = FontWeight.ExtraLight,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ){
+                        if (matchedProduct != null) {
+                            navController.navigate(ProductDetails(matchedProduct._id))
+                        }
+                    }
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
             )
 
-            // Carousel Row
+            // Carousel
             if (uiState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -214,40 +228,20 @@ fun LensCarouselScreen(
                     contentPadding = PaddingValues(horizontal = contentPadding),
                     flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
                 ) {
-                    itemsIndexed(
-                        items = uiState.lenses,
-                        key = { _, lens -> lens.id }
-                    ) { index, lens ->
+                    itemsIndexed(uiState.lenses, key = { _, lens -> lens.id }) { index, lens ->
                         val isSelected = index == uiState.selectedLensIndex
 
                         LensItem(
-                            lens = lens.copy(id = lens.id),
+                            lens = lens,
                             isSelected = isSelected,
                             itemSize = LENS_ITEM_SIZE,
                             haptic = haptic,
                             onLensClick = {
-                                Log.d("LensCarousel", "Tapped item: $index, scrolling to center...")
                                 viewModel.onLensTapped(index)
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 coroutineScope.launch {
-                                    try {
-                                        // Calculate the center offset dynamically
-                                        val totalItemWidth = LENS_ITEM_SIZE + LENS_ITEM_SPACING
-                                        val targetOffsetPx = with(density) {
-                                            ((totalItemWidth * index) - (screenWidth / 2) + (LENS_ITEM_SIZE / 2)).toPx().toInt()
-                                        }
-
-                                        lazyListState.animateScrollToItem(
-                                            index = index,
-                                            scrollOffset = 0 // negative to move the item toward center
-                                        )
-
-                                        Log.d("LensCarousel", "Centered lens index: $index at offset $targetOffsetPx")
-                                    } catch (e: Exception) {
-                                        Log.e("LensCarousel", "Scroll animation failed", e)
-                                    }
+                                    lazyListState.animateScrollToItem(index)
                                 }
-
                             }
                         )
                     }
@@ -256,6 +250,7 @@ fun LensCarouselScreen(
         }
     }
 }
+
 
 
 
@@ -323,7 +318,10 @@ fun LensItem(
                     .clip(CircleShape)
                     .background(
                         Brush.radialGradient(
-                            colors = listOf(Color.Black.copy(alpha = 0.0f), Color.Black.copy(alpha = 0.3f)),
+                            colors = listOf(
+                                Color.Black.copy(alpha = 0.0f),
+                                Color.Black.copy(alpha = 0.3f)
+                            ),
                             radius = with(density) { (itemSize / 2).toPx() }
                         )
                     )

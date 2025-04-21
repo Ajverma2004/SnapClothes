@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.snapclothes.presentation.screens.auth.AuthBaseViewModel
+import com.ajverma.snapclothes.presentation.screens.navigation.Carousal
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductDetails
 import com.ajverma.snapclothes.presentation.screens.navigation.ProductList
 import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
@@ -138,7 +139,13 @@ fun HomeScreen(
                 is HomeViewModel.HomeState.Success -> {
 
                     item {
-                        ARHomeHeader()
+                        ARHomeHeader(
+                            onLivePreviewClick = {
+                            },
+                            onCameraTryOnClick = {
+                                navController.navigate(Carousal)
+                            }
+                        )
                     }
 
                     item { Spacer(modifier = Modifier.height(20.dp)) }

@@ -10,6 +10,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -333,6 +340,20 @@ class MainActivity : ComponentActivity() {
                                                 it.route == item.route::class.qualifiedName
                                             } == true
 
+                                            val isMiddle = item == BottomNavItems.Carousal
+
+                                            // Idle animation only for AR Button
+                                            val infiniteTransition = rememberInfiniteTransition(label = "ARAnimation")
+                                            val bounceOffset by infiniteTransition.animateFloat(
+                                                initialValue = 0f,
+                                                targetValue = if (isMiddle) -6f else 0f,
+                                                animationSpec = infiniteRepeatable(
+                                                    animation = tween(1000, easing = FastOutLinearInEasing, delayMillis = 1000),
+                                                    repeatMode = RepeatMode.Reverse
+                                                ),
+                                                label = "ARButtonBounce"
+                                            )
+
                                             IconButton(onClick = {
                                                 val routeString = currentRoute?.route
                                                 previousBottomRoute.value = bottomNavRoutes.find { it::class.qualifiedName == routeString }
@@ -342,12 +363,16 @@ class MainActivity : ComponentActivity() {
                                                     restoreState = true
                                                 }
 
-                                            }) {
+                                            },
+                                                modifier = if (isMiddle) Modifier.offset(y = bounceOffset.dp) else Modifier
+                                            ) {
                                                 Icon(
-                                                    imageVector = item.icon,
+                                                    painter = painterResource(item.icon),
                                                     contentDescription = null,
                                                     tint = if (selected) Color.Black else Color.Gray,
-                                                    modifier = Modifier.size(24.dp)
+                                                    modifier = Modifier.size(
+                                                        if(item.icon == R.drawable.ar_hehe) 32.dp else 24.dp
+                                                    )
                                                 )
                                             }
                                         }
@@ -420,20 +445,20 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    sealed class BottomNavItems(val route: NavRoutes, val icon: ImageVector) {
+    sealed class BottomNavItems(val route: NavRoutes, val icon: Int) {
         data object Home : BottomNavItems(
             com.ajverma.snapclothes.presentation.screens.navigation.Home,
-            Icons.Default.Home
+            R.drawable.homebn
         )
 
         data object Favourites : BottomNavItems(
             com.ajverma.snapclothes.presentation.screens.navigation.Favourites,
-            Icons.Filled.Favorite
+            R.drawable.favourite_bn
         )
 
         data object Carousal : BottomNavItems(
             com.ajverma.snapclothes.presentation.screens.navigation.Carousal,
-            Icons.TwoTone.PlayArrow
+            R.drawable.ar_hehe
         )
     }
 }
