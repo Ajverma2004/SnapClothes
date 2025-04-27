@@ -22,10 +22,15 @@ class LensViewModel @Inject constructor() : ViewModel() {
     private suspend fun fetchLensesFromRepository(): List<LensData> {
         delay(500)
         return listOf(
-            LensData("d1218e18-2e0c-4366-abc9-2245e3a270a9", "Puffer Jacket", "https://picsum.photos/id/10/200", "6805797ae1032701b069f8c9"),
-            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "Superman T-Shirt", "https://picsum.photos/id/20/200", "67e0a260b659996e8d23c4e6"),
-            LensData("1a2dd1a4-ae08-42bb-b6ab-7ef35f349bdd", "Orange and green dress", "https://picsum.photos/id/60/200", "67f293897f606ef770c60f91"),
-            LensData("9faa4c06-3a15-48f4-ac60-2d3ae0423fab", "Sunglasses", "https://picsum.photos/id/100/200", "67e0a91f359e76df43197166")
+            LensData("d1218e18-2e0c-4366-abc9-2245e3a270a9", "puffer jacket", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745780687/vest_extracted_centered_200x200_ch0mum.png", "6805797ae1032701b069f8c9"),
+            LensData("dd16a951-2a07-4f0e-8869-f3565c9fa76f", "coat", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745780995/new_coat_extracted_centered_200x200_qmhjfd.png", "680e2d6db3d69b4292da6bd7"),
+            LensData("9ef9bd38-623c-450b-85ce-456ad17181b5", "purple full", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745781823/new_bodysuit_extracted_centered_200x200_wy4j9f.png", "680e3f7eef3c5d99a202ffcf"),
+            LensData("942e242a-bf2a-4875-b585-75b4fae6ba6d", "pinky", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745781601/isolated_dress_extracted_centered_200x200_htkrac.png", "680e34cead3bf40722770ebd"),
+            LensData("b5ca0c29-db60-43b9-b203-ca4430c7dd5a", "red dress", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745782354/red_dress_white_bg_clean_200x200_y93xgo.png", "680c2128027567c359766d7f"),
+            LensData("a53e8ad9-4239-4a6b-87af-e71bda9b25a9", "skirt", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745782669/skirt_extracted_centered_200x200_clnljk.png", "680bc73ab8e52633248db841"),
+            LensData("db79d777-42a8-48dd-90f8-d36f3b615cc1", "white dress", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745782959/tight_dress_extracted_centered_200x200_aq1wqx.png", "680bb59adbf4940218976169"),
+            LensData("9b7188b6-6768-42af-8d10-ece8d304af07", "hoodie", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745783434/hoodie_extracted_centered_200x200_xdlffh.png", "680b9b5dc7a86cfa2b6c1bd6"),
+            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "superman t-shirt", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745783753/superman_tee_extracted_centered_200x200_jksslj.png", "67e0a260b659996e8d23c4e6")
         )
     }
     // --- End Simulation ---
@@ -34,7 +39,7 @@ class LensViewModel @Inject constructor() : ViewModel() {
         loadLenses()
     }
 
-    fun loadLenses() {
+    private fun loadLenses() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {

@@ -2,7 +2,7 @@
 accompanistNavigationAnimation = "0.34.0"
 accompanistPermissions = "0.37.2"
 agp = "8.8.2"
-camerakit = "1.39.0"
+camerakit = "1.40.0"
 coilCompose = "3.0.4"
 coilNetworkOkhttp = "3.0.4"
 dotsindicator = "5.1.0"

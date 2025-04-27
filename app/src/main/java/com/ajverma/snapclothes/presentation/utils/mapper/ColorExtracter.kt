@@ -14,7 +14,7 @@ fun String.colorExtractor(
         "Brown" -> Color(0xFF8B4513)
         "Khaki" -> Color(0xFFF0E68C)
         "White" -> Color(0xFFFFFFFF)
-        "Navy Blue", "Navy blue" -> Color(0xFF000080)
+        "Navy Blue", "Navy blue", "Navy" -> Color(0xFF000080)
         "Dark Grey" -> Color(0xFFA9A9A9)
         "Dark Pink" -> Color(0xFFFF1493)
         "Rose Red" -> Color(0xFFC21E56)
@@ -25,8 +25,6 @@ fun String.colorExtractor(
         "Peacock Blue" -> Color(0xFF1C39BB)
         "Light Green" -> Color(0xFF90EE90)
         "Rose Purple" -> Color(0xFFB03060)
-
-        // Newly added colors
         "Sunflower" -> Color(0xFFFFDA03)
         "Camo" -> Color(0xFF78866B)
         "Red" -> Color(0xFFFF0000)
@@ -34,7 +32,12 @@ fun String.colorExtractor(
         "Olive" -> Color(0xFF808000)
         "Light Pastel" -> Color(0xFFE6E6FA)
         "Stone" -> Color(0xFF837E7C)
-
+        "Yellow" -> Color(0xFFFFFF00)
+        "Burgundy" -> Color(0xFF800020)
+        "Blue" -> Color(0xFF0000FF)
+        "Wine" -> Color(0xFF722F37)
+        "Snow White" -> Color(0xFFFFFAFA)
+        "Pearl" -> Color(0xFFEAE0C8)
         else -> Color.Black
     }
 }

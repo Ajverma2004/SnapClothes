@@ -10,6 +10,8 @@ fun iconFromCategory(category: String): Int {
         "t-shirt" -> R.drawable.tshirt
         "sunglasses" -> R.drawable.sunglasses
         "jacket" -> R.drawable.jacket
+        "coat" -> R.drawable.coat
+        "hoodie" -> R.drawable.hoodie
         else -> R.drawable.other
     }
 }
@@ -20,7 +22,9 @@ fun nameFromCategory(category: String): String {
         "shirts" -> "Shirt"
         "t-shirt" -> "T-Shirt"
         "sunglasses" -> "Sunglasses"
-        "Jacket", "jacket" -> "Jacket"
+        "jacket" -> "Jacket"
+        "coat" -> "Coat"
+        "hoodie" -> "Hoodie"
         else -> "others"
     }
 }
