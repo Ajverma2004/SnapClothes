@@ -30,7 +30,8 @@ class LensViewModel @Inject constructor() : ViewModel() {
             LensData("a53e8ad9-4239-4a6b-87af-e71bda9b25a9", "skirt", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745782669/skirt_extracted_centered_200x200_clnljk.png", "680bc73ab8e52633248db841"),
             LensData("db79d777-42a8-48dd-90f8-d36f3b615cc1", "white dress", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745782959/tight_dress_extracted_centered_200x200_aq1wqx.png", "680bb59adbf4940218976169"),
             LensData("9b7188b6-6768-42af-8d10-ece8d304af07", "hoodie", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745783434/hoodie_extracted_centered_200x200_xdlffh.png", "680b9b5dc7a86cfa2b6c1bd6"),
-            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "superman t-shirt", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745783753/superman_tee_extracted_centered_200x200_jksslj.png", "67e0a260b659996e8d23c4e6")
+            LensData("196b1566-2372-4d8a-8cf4-253a3fd3797c", "superman t-shirt", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745783753/superman_tee_extracted_centered_200x200_jksslj.png", "67e0a260b659996e8d23c4e6"),
+            LensData("9f20cf8d-8ae1-4648-83b0-d85f332beb80", "graduation gown", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745985242/gown_extracted_centered_200x200_ral9ij.png", "68119e37632a5d5cd4589498")
         )
     }
     // --- End Simulation ---
