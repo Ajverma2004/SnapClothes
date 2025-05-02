@@ -82,7 +82,6 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.ajverma.snapclothes.CameraActivity
 import com.ajverma.snapclothes.R
-import com.ajverma.snapclothes.data.network.models.BannerResponseItem
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.database.FavouriteProduct
 import com.ajverma.snapclothes.presentation.screens.favourite.FavouriteViewModel
@@ -487,7 +486,7 @@ fun FloatingTryARButton(
 
         // Foreground AR icon
         Image(
-            painter = painterResource(id = R.drawable.clothing), // Your AR icon here
+            painter = painterResource(id = R.drawable.clothing),
             contentDescription = "Try AR",
             modifier = Modifier
                 .align(Alignment.Center)

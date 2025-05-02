@@ -9,7 +9,6 @@ import dagger.hilt.android.HiltAndroidApp
 class FoodApp: Application() {
     override fun onCreate() {
         super.onCreate()
-        FacebookSdk.sdkInitialize(applicationContext)
         AppEventsLogger.activateApp(this)
     }
 }

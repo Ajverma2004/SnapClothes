@@ -68,15 +68,13 @@ fun ARHomeHeader(
 
     val infiniteTransition = rememberInfiniteTransition(label = "Color Animation")
 
-// Toggle state
     var isDark by remember { mutableStateOf(false) }
-    // Direct color change (no animation)
     val buttonContainerColor = if (isDark) Color.Black else Color.White
     val buttonTextColor = if (isDark) Color.White else Color.Black
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(1500) // Every 1 second
+            delay(1500)
             isDark = !isDark
         }
     }

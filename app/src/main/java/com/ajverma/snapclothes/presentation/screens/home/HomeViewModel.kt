@@ -2,7 +2,6 @@ package com.ajverma.snapclothes.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ajverma.snapclothes.data.network.models.BannerResponseItem
 import com.ajverma.snapclothes.data.network.models.CategoryResponse
 import com.ajverma.snapclothes.data.network.models.ProductResponseItem
 import com.ajverma.snapclothes.domain.repositories.HomeRepository
@@ -29,9 +28,6 @@ class HomeViewModel @Inject constructor(
     private val _event = MutableSharedFlow<HomeEvent?>()
     val event = _event.asSharedFlow()
 
-    private val _banners = MutableStateFlow<List<BannerResponseItem>>(emptyList())
-    val banners = _banners.asStateFlow()
-
     private val _categories = MutableStateFlow<List<String>>(emptyList())
     val categories = _categories.asStateFlow()
 
@@ -40,27 +36,10 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        getBanners()
         getCategories()
         getProducts()
     }
 
-
-    fun getBanners() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _state.value = HomeState.Loading
-            val result = repository.getBanners()
-            when (result) {
-                is Resource.Success -> {
-                    _state.value = HomeState.Success
-                    _banners.value = result.data
-                }
-                is Resource.Error -> {
-                    _state.value = HomeState.Error(result.message)
-                }
-            }
-        }
-    }
 
     fun getCategories() {
         viewModelScope.launch(Dispatchers.IO) {

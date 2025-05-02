@@ -3,7 +3,6 @@ package com.ajverma.snapclothes.presentation.screens.auth.sign_up
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.data.network.auth.GoogleAuthClient
 import com.ajverma.snapclothes.presentation.screens.auth.AuthBaseViewModel
 import com.ajverma.snapclothes.presentation.screens.auth.auth_option.AuthOptionViewModel.AuthEvent
@@ -22,8 +21,7 @@ import javax.inject.Inject
 class SignupViewModel @Inject constructor(
     @ApplicationContext context: Context
 ): AuthBaseViewModel(
-    googleAuthClient = GoogleAuthClient(context = context),
-    facebookAuthClient = FacebookAuthClient()
+    googleAuthClient = GoogleAuthClient(context = context)
 ) {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()

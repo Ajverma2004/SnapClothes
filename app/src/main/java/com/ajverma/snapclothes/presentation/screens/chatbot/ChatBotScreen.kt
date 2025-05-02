@@ -147,16 +147,14 @@ fun ChatBotScreen(
             .navigationBarsPadding(),
         containerColor = Color.Transparent,
         bottomBar = {
-            // Restored original Input Row structure
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White) // Ensure input row background is white
-                    .padding(horizontal = 8.dp, vertical = 8.dp), // Original padding
+                    .background(Color.White)
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    // Use the original ChatInputField composable
                     ChatInputField(
                         text = text,
                         onTextChange = { text = it },
@@ -168,28 +166,27 @@ fun ChatBotScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 val haptic = LocalHapticFeedback.current
-                // Use the original IconButton styling
                 IconButton(
                     onClick = {
                         if (text.isNotBlank()) {
                             viewModel.onSendClicked(text)
                             text = ""
                             focusManager.clearFocus()
-                            keyboardController?.hide() // Explicitly hide keyboard
+                            keyboardController?.hide()
                         }
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     },
                     interactionSource = remember { MutableInteractionSource() },
                     enabled = text.isNotBlank(),
-                    modifier = Modifier.size(48.dp), // Explicit size can help alignment
+                    modifier = Modifier.size(48.dp),
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.Black, // Original content color
-                        disabledContainerColor = MaterialTheme.colorScheme.primary, // Original disabled color
-                        disabledContentColor = Color.Black.copy(alpha = 0.3f) // Original disabled content color
+                        contentColor = Color.Black,
+                        disabledContainerColor = MaterialTheme.colorScheme.primary,
+                        disabledContentColor = Color.Black.copy(alpha = 0.3f)
                     ),
                 ) {
-                    Box( // Center icon within the IconButton
+                    Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ){
@@ -201,12 +198,12 @@ fun ChatBotScreen(
                 }
             }
         }
-    ) { paddingValues -> // Content area
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Apply padding from Scaffold (mostly bottom)
-                .statusBarsPadding() // Apply status bar padding here to keep content below status bar
+                .padding(paddingValues)
+                .statusBarsPadding()
                 .pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         if (isInputFocused) {
@@ -215,7 +212,7 @@ fun ChatBotScreen(
                         }
                     })
                 }
-                .background(Color.White) // Ensure content column background is white
+                .background(Color.White)
         ) {
             Box(
                 modifier = Modifier
@@ -223,7 +220,7 @@ fun ChatBotScreen(
                     .fillMaxWidth()
             ) {
                 if (messageList.isEmpty()) {
-                    EmptyState() // Keep extracted empty state
+                    EmptyState()
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -235,7 +232,6 @@ fun ChatBotScreen(
                         items(
                             items = messageList.reversed(),
                         ) { message ->
-                            // Use original message row styling
                             MessageRow(
                                 message = message,
                                 onProductClick = { productId ->
@@ -253,7 +249,6 @@ fun ChatBotScreen(
 
 @Composable
 fun EmptyState(modifier: Modifier = Modifier) {
-    // Kept the enhanced EmptyState from previous version
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -271,7 +266,7 @@ fun EmptyState(modifier: Modifier = Modifier) {
             text = "👋 Hi! I'm your AI Assistant",
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground // Use color appropriate for White background
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -279,7 +274,7 @@ fun EmptyState(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            modifier = Modifier.padding(bottom = 20.dp) // Slightly muted text
+            modifier = Modifier.padding(bottom = 20.dp)
         )
     }
 }
@@ -290,79 +285,70 @@ fun MessageRow(
     message: ChatBotData,
     onProductClick: (String) -> Unit
 ) {
-    // Reverted to original styling logic for message bubbles
     val clipboardManager = LocalClipboardManager.current
     val isUserMessage = message.role == "user"
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp), // Original padding
+            .padding(horizontal = 16.dp, vertical = 4.dp),
         horizontalAlignment = if (isUserMessage) Alignment.End else Alignment.Start
     ) {
         Surface(
             modifier = Modifier
-                .widthIn(max = 300.dp) // Keep max width constraint
-                .pointerInput(Unit) { // Keep long press to copy
+                .widthIn(max = 300.dp)
+                .pointerInput(Unit) {
                     detectTapGestures(
                         onLongPress = {
                             clipboardManager.setText(AnnotatedString(message.message))
-                            // Optional: Show toast message "Copied!"
                         }
                     )
                 },
-            // Reverted color logic
             color = when (message.role) {
                 "user" -> MaterialTheme.colorScheme.primary
-                else -> Color.Transparent // Bot messages have transparent background
+                else -> Color.Transparent
             },
-            shape = RoundedCornerShape( // Original shape logic
+            shape = RoundedCornerShape(
                 topStart = 12.dp,
                 topEnd = 12.dp,
                 bottomStart = if (isUserMessage) 12.dp else 4.dp,
                 bottomEnd = if (isUserMessage) 4.dp else 12.dp
             ),
-            // Reverted elevation logic
             tonalElevation = if (isUserMessage) 4.dp else 0.dp,
             shadowElevation = if (isUserMessage) 4.dp else 0.dp
         ) {
-            Column( // Use Column to stack text and products
-                modifier = Modifier.padding( // Keep internal padding consistent
-                    vertical = if (message.message == "Typing...") 4.dp else 8.dp, // Less vertical padding for typing
+            Column(
+                modifier = Modifier.padding(
+                    vertical = if (message.message == "Typing...") 4.dp else 8.dp,
                     horizontal = 12.dp
                 )
             ) {
                 if (message.message == "Typing...") {
                     Box(
                         modifier = Modifier
-                            .padding(16.dp) // Original padding for typing
+                            .padding(16.dp)
                             .height(24.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         TypingAnimation(
-                            circleColor = Color.Black, // Original typing color
+                            circleColor = Color.Black,
                             circleSize = 6f,
                             travelDistance = 6f
                         )
                     }
                 } else {
-                    // Original text styling
                     Text(
                         text = message.message,
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(vertical = 8.dp), // Add padding if products aren't present
+                        modifier = Modifier.padding(vertical = 8.dp),
                         lineHeight = 20.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black // Original text color
+                        color = Color.Black
                     )
-
-                    // Display Recommended Products below the text message
-                    // Keep enhanced product card display logic
                     if (!message.products.isNullOrEmpty()) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             message.products.forEach { product ->
-                                // Use the enhanced ProductCard composable
                                 ProductCard(product = product) {
                                     onProductClick(product._id)
                                 }
@@ -376,7 +362,7 @@ fun MessageRow(
 }
 
 
-// Restored Original ChatInputField Composable
+
 @Composable
 fun ChatInputField(
     text: String,
@@ -390,37 +376,37 @@ fun ChatInputField(
         placeholder = {
             Text(
                 text = "Type a message...",
-                fontSize = 14.sp, // Original font size
-                color = Color.Gray // Original placeholder color
+                fontSize = 14.sp,
+                color = Color.Gray
             )
         },
-        singleLine = true, // Original single line behavior
-        textStyle = TextStyle(fontSize = 14.sp, color = Color.Black), // Original text style, ensure black color
+        singleLine = true,
+        textStyle = TextStyle(fontSize = 14.sp, color = Color.Black),
         modifier = Modifier
             .fillMaxWidth()
             .focusRequester(focusRequester)
             .onFocusChanged { onFocusChanged(it.isFocused) }
-            .height(48.dp) // Original height
-            .shadow(4.dp, RoundedCornerShape(20.dp)) // Original shadow
-            .border(1.dp, Color.Black, RoundedCornerShape(20.dp)) // Original border
-            .clip(RoundedCornerShape(20.dp)) // Original clip
-            .background(Color.White), // Original background
-        colors = TextFieldDefaults.colors( // Original colors
+            .height(48.dp)
+            .shadow(4.dp, RoundedCornerShape(20.dp))
+            .border(1.dp, Color.Black, RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color.White),
+        colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
-            cursorColor = Color.Black, // Original cursor color
-            focusedTextColor = Color.Black, // Explicitly set text color
-            unfocusedTextColor = Color.Black // Explicitly set text color
+            cursorColor = Color.Black,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black
         ),
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Default)
     )
 }
 
 
-// Kept the enhanced ProductCard composable from the previous version
+
 @Composable
 fun ProductCard(
     product: ProductResponseItem,
@@ -433,8 +419,7 @@ fun ProductCard(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        // Use a light background color that works well on the main white background
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)) // Light gray
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
     ) {
         Row(
             modifier = Modifier
@@ -448,7 +433,7 @@ fun ProductCard(
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.LightGray), // Placeholder background
+                    .background(Color.LightGray),
                 contentScale = ContentScale.Crop
             )
 
@@ -463,7 +448,7 @@ fun ProductCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface // Ensure readable text color
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -471,7 +456,7 @@ fun ProductCard(
                 Text(
                     text = "£${String.format("%.2f", product.price)}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF4CAF50), // Keep price color primary
+                    color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.SemiBold
                 )
             }

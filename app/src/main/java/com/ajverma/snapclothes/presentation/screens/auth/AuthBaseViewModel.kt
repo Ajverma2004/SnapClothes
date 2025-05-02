@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.data.network.auth.GoogleAuthClient
 import com.ajverma.snapclothes.data.network.auth.SignInResult
 import com.facebook.CallbackManager
@@ -21,8 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 abstract class AuthBaseViewModel(
-    private val googleAuthClient: GoogleAuthClient,
-    private val facebookAuthClient: FacebookAuthClient
+    private val googleAuthClient: GoogleAuthClient
 ): ViewModel() {
 
     var error: String = ""
@@ -69,39 +67,7 @@ abstract class AuthBaseViewModel(
         viewModelScope.launch {
             Log.d("SignOutDebug", "Sign out initiated")
             googleAuthClient.signOut()
-            facebookAuthClient.signOut()
             signOut()
         }
     }
-
-
-
-
-
-    fun onFacebookClick(context: ComponentActivity){
-        initiateFacebookLogin(context)
-    }
-
-    private fun initiateFacebookLogin(context: ComponentActivity) {
-        viewModelScope.launch {
-            Log.d("FacebookLogin", "Initiating Facebook Login")
-            loading()
-            facebookAuthClient.login(
-                activity = context,
-                onSuccess = {
-                    Log.d("FacebookLogin", "Facebook Login Success")
-                    onSocialLoginSuccess()
-                },
-                onCancel = {
-                    Log.d("FacebookLogin", "Facebook Login Cancelled")
-                    onFacebookError("Facebook login canceled")
-                },
-                onError = {
-                    Log.e("FacebookLogin", "Facebook Login Error: $it")
-                    onFacebookError(it)
-                }
-            )
-        }
-    }
-
 }

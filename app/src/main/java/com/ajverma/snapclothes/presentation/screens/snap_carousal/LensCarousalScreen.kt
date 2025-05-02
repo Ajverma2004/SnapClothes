@@ -129,10 +129,9 @@ fun LensCarouselScreen(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val contentPadding = (screenWidth - LENS_ITEM_SIZE) / 2
 
-    var isFrontCamera by remember { mutableStateOf(true) }
+    var isFrontCamera by remember { mutableStateOf(false) }
     var isCameraReady by remember { mutableStateOf(false) }
 
-    // ✅ Add this back — auto-select center lens while scrolling
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex to lazyListState.firstVisibleItemScrollOffset }
             .collect { (index, offset) ->

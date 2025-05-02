@@ -122,7 +122,7 @@ class CameraActivity : ComponentActivity() {
                 }
             }
         } else {
-            imageProcessorSource.startPreview(true)
+            imageProcessorSource.startPreview(false)
 
             Scaffold(
                 topBar = {

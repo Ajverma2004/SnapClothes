@@ -82,7 +82,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.presentation.screens.chatbot.FloatingChatButton
 import com.ajverma.snapclothes.presentation.screens.chatbot.PopoutChatbot
 import com.ajverma.snapclothes.presentation.screens.home.HomeViewModel
@@ -116,9 +115,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     private var showSplashScreen = true
 
-    @Inject
-    lateinit var facebookAuthClient: FacebookAuthClient
-
     @OptIn(ExperimentalMaterial3Api::class)
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,7 +135,6 @@ class MainActivity : ComponentActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             homeViewModel.getProducts()
             homeViewModel.getCategories()
-            homeViewModel.getBanners()
             delay(2000)
             showSplashScreen = false
         }

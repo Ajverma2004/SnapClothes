@@ -52,12 +52,10 @@ import com.ajverma.snapclothes.presentation.screens.navigation.Welcome
 import com.ajverma.snapclothes.presentation.screens.products_list.ProductsListViewModel
 import com.ajverma.snapclothes.presentation.utils.widgets.ARHomeHeader
 import com.ajverma.snapclothes.presentation.utils.widgets.ProductsView
-import com.ajverma.snapclothes.presentation.utils.widgets.SnapBanner
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapCategories
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapError
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapHeader
 import com.ajverma.snapclothes.presentation.utils.widgets.SnapLoading
-import com.ajverma.snapclothes.presentation.utils.widgets.SnapOutlinedText
 import com.ajverma.snapclothes.ui.theme.SnapYellow
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
@@ -71,7 +69,6 @@ fun HomeScreen(
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val bannersList = viewModel.banners.collectAsStateWithLifecycle()
     val categoriesList = viewModel.categories.collectAsStateWithLifecycle()
     val productsList = viewModel.products.collectAsStateWithLifecycle()
 
@@ -128,7 +125,6 @@ fun HomeScreen(
                         SnapError(
                             error = uiState.message,
                             onRetry = {
-                                viewModel.getBanners()
                                 viewModel.getCategories()
                                 viewModel.getProducts()
                             }

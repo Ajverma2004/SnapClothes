@@ -3,7 +3,6 @@ package com.ajverma.snapclothes.presentation.screens.auth.auth_option
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ajverma.snapclothes.data.network.auth.FacebookAuthClient
 import com.ajverma.snapclothes.data.network.auth.GoogleAuthClient
 import com.ajverma.snapclothes.presentation.screens.auth.AuthBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +18,7 @@ import javax.inject.Inject
 class AuthOptionViewModel @Inject constructor(
     @ApplicationContext context: Context
 ): AuthBaseViewModel(
-    googleAuthClient = GoogleAuthClient(context = context),
-    facebookAuthClient = FacebookAuthClient()
+    googleAuthClient = GoogleAuthClient(context = context)
 ) {
 
     private val _uiState = MutableStateFlow<AuthEvent>(AuthEvent.Loading)

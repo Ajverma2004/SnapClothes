@@ -18,7 +18,6 @@ class LensViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(LensUiState())
     val uiState: StateFlow<LensUiState> = _uiState.asStateFlow()
 
-    // --- Repository Interaction (Simulated) ---
     private suspend fun fetchLensesFromRepository(): List<LensData> {
         delay(500)
         return listOf(
@@ -34,7 +33,6 @@ class LensViewModel @Inject constructor() : ViewModel() {
             LensData("9f20cf8d-8ae1-4648-83b0-d85f332beb80", "graduation gown", "https://res.cloudinary.com/dthxd4dah/image/upload/v1745985242/gown_extracted_centered_200x200_ral9ij.png", "68119e37632a5d5cd4589498")
         )
     }
-    // --- End Simulation ---
 
     init {
         loadLenses()

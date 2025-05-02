@@ -59,7 +59,6 @@ class ProductsListViewModel @Inject constructor(
                     if (products is List<*> && products.all { it is ProductResponseItem }) {
                         _state.value = ProductsListState.Success(products.filterIsInstance<ProductResponseItem>())
                     } else {
-                        // If the backend sends { "message": "No items..." }, fallback to empty
                         _state.value = ProductsListState.Success(emptyList())
                     }
                 }

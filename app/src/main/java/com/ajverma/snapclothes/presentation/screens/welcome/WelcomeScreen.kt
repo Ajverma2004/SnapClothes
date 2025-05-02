@@ -51,7 +51,6 @@ fun WelcomeScreen(
     LaunchedEffect(key1 = Unit) {
         viewModel.getProducts()
         viewModel.getCategories()
-        viewModel.getBanners()
     }
 
     Box(
