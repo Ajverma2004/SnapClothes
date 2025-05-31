@@ -102,7 +102,7 @@ SnapClothes was created to solve the frustration of guessing how outfits will lo
 
 ## 👤 Author
 
-**[Ansh Verma]**  
+**Ansh Verma**  
 Final Year BSc Computer Science Student, University of East London  
 📍 Based in UK | 🎯 Aspiring Android Engineer  
 [LinkedIn](https://linkedin.com/in/AnshV)
